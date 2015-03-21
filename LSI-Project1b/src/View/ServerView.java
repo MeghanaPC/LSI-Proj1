@@ -69,7 +69,7 @@ public class ServerView {
 	}
 	
 //	Tested and working
-	
+	/*
 	public static void main(String[] args){
 		
 		HashMap<String,String> mapA = new HashMap<String, String>();
@@ -87,5 +87,6 @@ public class ServerView {
 		sView.iterateHashMap(sView.mergeViews(mapA, mapB));
 		
 	}
+	*/
 
 }

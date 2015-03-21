@@ -10,6 +10,10 @@ public class viewDaemon  implements Runnable{
 	
 	HashMap<String, String> ServerView;
 	
+	public viewDaemon(HashMap<String, String> setView) {
+		ServerView = setView;
+	}
+	
 	@Override
 	public void run(){
 		Double numProbability = 0.0;
