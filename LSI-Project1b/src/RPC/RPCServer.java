@@ -46,7 +46,7 @@ public class RPCServer implements Runnable{
 	}
 	public String generateReply(String data)
 	{
-		  int operationCode = ...; // get requested operationCode
+		 /* int operationCode = ...; // get requested operationCode
 		 switch( operationCode ) {
 	    	...
 	    	case operationSESSIONREAD:
@@ -57,7 +57,7 @@ public class RPCServer implements Runnable{
 	    }
 		
 		 
-		 //append with callID
+		 //append with callID*/
 		String result=null;
 		return result;
 		

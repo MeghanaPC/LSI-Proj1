@@ -64,7 +64,7 @@ public class RPCClient {
 							  {
 								  //only when same version number and callID is matched
 								  SessionState returnObj=new SessionState();
-								  returnObj.setExpirationTimeStamp(Date.parse(output[4]));
+								 // returnObj.setExpirationTimeStamp(Date.parse(output[4]));
 								  returnObj.setSessionID(output[1]);
 								  returnObj.setSessionMessage(output[3]);
 								  returnObj.setSessionVersion(Integer.parseInt(output[2]));
@@ -84,6 +84,7 @@ public class RPCClient {
 			  {
 				  rpcSocket.close();
 			  }
+			return null;
 		}
 		private boolean checkCallIDVersion(String inBuf,int callID)
 		{
@@ -156,18 +157,18 @@ public class RPCClient {
 			  }
 			  
 		}
-		public HashMap<String,String> ExchangeViewClient(String dest,HashMap<String,String> view) throws UnknownHostException
+		/*public HashMap<String,String> ExchangeViewClient(String dest,HashMap<String,String> view) throws UnknownHostException
 		{
 			callID=callID+1;
 			InetAddress IP = InetAddress.getByName(dest);
 			String viewString=null;
-			for(EntrySet)
+			//for(EntrySet)
 			 DatagramSocket rpcSocket = new DatagramSocket();
 				rpcSocket.setSoTimeout(timeOut);
 				  callID = callID+1;
-				String dataToSend =callID + DELIMITER +
+				//String dataToSend =callID + DELIMITER +
 			 
-		}
+		}*/
 		
 
 }
