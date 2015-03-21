@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import Project1a.SessionState;
 public class RPCClient {
@@ -31,7 +32,7 @@ public class RPCClient {
 	  //
 		public SessionState SessionReadClient(List<String> destIP,SessionState sessionObj) throws IOException
 		{
-			  
+			  boolean flag=true;
 			  DatagramSocket rpcSocket = new DatagramSocket();
 			  rpcSocket.setSoTimeout(timeOut);
 			  callID = callID+1;
@@ -51,8 +52,7 @@ public class RPCClient {
 			  byte [] inBuf = new byte[maxPacketSize];
 			  DatagramPacket recvPkt = new DatagramPacket(inBuf, inBuf.length);
 			  try {
-					  for(int i=0;i<destIP.size();i++)
-					  {
+				  do{
 						  recvPkt.setLength(inBuf.length);
 						  rpcSocket.receive(recvPkt);
 						  String receivedString=new String(inBuf);
@@ -62,9 +62,11 @@ public class RPCClient {
 							  String[] output=receivedString.split(DELIMITER);
 							  if(checkCallIDVersion(output[2],callID))
 							  {
+								  flag=false;
+							  
 								  //only when same version number and callID is matched
 								  SessionState returnObj=new SessionState();
-								 // returnObj.setExpirationTimeStamp(Date.parse(output[4]));
+								  returnObj.setExpirationTimeStamp(Long.parseLong(output[4]));
 								  returnObj.setSessionID(output[1]);
 								  returnObj.setSessionMessage(output[3]);
 								  returnObj.setSessionVersion(Integer.parseInt(output[2]));
@@ -72,7 +74,8 @@ public class RPCClient {
 								  return returnObj;
 							  }
 						  }
-			    } 
+							  
+			    } while(true);
 			  } catch(SocketTimeoutException stoe) {
 			    // timeout 
 			    return null;
@@ -86,7 +89,7 @@ public class RPCClient {
 			  }
 			return null;
 		}
-		private boolean checkCallIDVersion(String inBuf,int callID)
+		private boolean checkCallIDVersion(String buff,int callID)
 		{
 			//need to implement
 			return true;
@@ -118,57 +121,105 @@ public class RPCClient {
 			  try {
 				  
 				  	  int k_ack=0;
-					  for(int i=0;i<destIP.size();i++)
-					  {
-						  recvPkt.setLength(inBuf.length);
-						  rpcSocket.receive(recvPkt);
-						  String receivedString=new String(inBuf);
-						  if(receivedString!=null)
-						  {
-							  //format = CallID , ack
-							  String[] output=receivedString.split(DELIMITER);
-							 
-							  if(output[1].equals(ack))
+					  do{
+							  recvPkt.setLength(inBuf.length);
+							  rpcSocket.receive(recvPkt);
+							  String receivedString=new String(inBuf);
+							  if(receivedString!=null)
 							  {
-								  k_ack=k_ack+1;
-								  InetAddress returnAddr = recvPkt.getAddress();
-								  String[] temp=returnAddr.toString().split("/");
-								  backups.add(temp[1]);
-							  } 
-						  }
-					  }
-					  if(backups.size()!=0)
-						  return backups;
-					  else
-						  return null;
+								  //format = CallID , ack
+								  String[] output=receivedString.split(DELIMITER);
+								 
+								  if(output[1].equals(ack))
+								  {
+									  k_ack=k_ack+1;
+									  InetAddress returnAddr = recvPkt.getAddress();
+									  String[] temp=returnAddr.toString().split("/");
+									  backups.add(temp[1]);
+								  } 
+							  }
+					  }while(k_ack!=destIP.size());
+					  
 			  }
 			  catch(SocketTimeoutException stoe) {
 			    // timeout 
 				  stoe.printStackTrace();
-				  return null;
+				  return backups;
 			  } catch(IOException ioe) {
 			    // other error 
 				  ioe.printStackTrace();
-				  return null;
+				  return backups;
 			  }
 			  finally
 			  {
 				  rpcSocket.close();
 			  }
+			return backups;
 			  
 		}
-		/*public HashMap<String,String> ExchangeViewClient(String dest,HashMap<String,String> view) throws UnknownHostException
+		public HashMap<String,String> ExchangeViewClient(String dest,HashMap<String,String> view) throws IOException
 		{
+			DatagramSocket rpcSocket = new DatagramSocket();
+			rpcSocket.setSoTimeout(timeOut);
 			callID=callID+1;
 			InetAddress IP = InetAddress.getByName(dest);
 			String viewString=null;
-			//for(EntrySet)
-			 DatagramSocket rpcSocket = new DatagramSocket();
-				rpcSocket.setSoTimeout(timeOut);
-				  callID = callID+1;
-				//String dataToSend =callID + DELIMITER +
+			for(Entry<String, String> e:view.entrySet())
+			{
+				viewString+=e.getKey()+"_"+e.getValue()+"-";
+			}
+			viewString=viewString.substring(0, viewString.length()-1);  
+			String dataToSend=callID+DELIMITER+viewString;
+			
+			 byte[] outBuf = new byte[maxPacketSize];
+			 outBuf=dataToSend.getBytes();
+			 DatagramPacket sendPkt = new DatagramPacket(outBuf, outBuf.length,IP, portProj1bRPC);
+			 rpcSocket.send(sendPkt);
+			  
+			 byte [] inBuf = new byte[maxPacketSize];
+			 DatagramPacket recvPkt = new DatagramPacket(inBuf, inBuf.length);
+			 try
+			 {
+				 //format = CallID, viewString
+				 String[] receivedString=null;
+				do
+				{
+					recvPkt.setLength(inBuf.length);
+					rpcSocket.receive(recvPkt);
+					receivedString=new String(inBuf).split(DELIMITER);
+					if(Integer.parseInt(receivedString[0])==callID)
+					{
+						String ResultviewString=receivedString[1];
+						HashMap<String,String> resultview=new HashMap<String,String>();
+						String[] tuples=ResultviewString.split("-");
+						for(String s:tuples)
+						{
+							String[] keyValue=s.split("_");
+							resultview.put(keyValue[0], keyValue[1]+"_"+keyValue[2]);
+						}
+						return resultview;
+					}
+					
+				 
+				}while(Integer.parseInt(receivedString[0])!=callID);
+				return null;
+			 }
+			 catch(SocketTimeoutException stoe) 
+			 {
+				    // timeout 
+					  stoe.printStackTrace();
+					  return null;
+			 } catch(IOException ioe) {
+				    // other error 
+					  ioe.printStackTrace();
+					  return null;
+			 }
+			 finally
+			 {
+					  rpcSocket.close();
+			 }	
 			 
-		}*/
+		}
 		
 
 }
