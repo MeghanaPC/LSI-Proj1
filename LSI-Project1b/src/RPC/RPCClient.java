@@ -87,12 +87,11 @@ public class RPCClient {
 			  {
 				  rpcSocket.close();
 			  }
-			return null;
 		}
 		private boolean checkCallIDVersion(String buff,int callID)
 		{
 			//need to implement
-			return true;
+			return false;
 		}
 		public List<String> SessionWriteClient(List<String> destIP,SessionState sessionObj) throws IOException
 		{
@@ -169,7 +168,7 @@ public class RPCClient {
 				viewString+=e.getKey()+"_"+e.getValue()+"-";
 			}
 			viewString=viewString.substring(0, viewString.length()-1);  
-			String dataToSend=callID+DELIMITER+viewString;
+			String dataToSend=callID+DELIMITER+OPCODE_VIEW+DELIMITER+viewString;
 			
 			 byte[] outBuf = new byte[maxPacketSize];
 			 outBuf=dataToSend.getBytes();

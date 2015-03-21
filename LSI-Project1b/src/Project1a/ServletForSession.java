@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+//import View.*;
+
 /**
  * @author trupti
  */
@@ -25,8 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 public class ServletForSession extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static boolean flag=false;
-      SessionDataTable sessiontable=new SessionDataTable();
-      UserSession usersession=new UserSession();
+    public static SessionDataTable sessiontable=new SessionDataTable();
+    public static UserSession usersession=new UserSession();
     
     /**
      * @see HttpServlet#HttpServlet()
