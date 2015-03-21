@@ -1,5 +1,5 @@
 package Project1a;
-import java.util.Date;
+//import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -13,7 +13,7 @@ public class SessionState {
 	private String sessionMessage;
 	private Integer sessionVersion;
 	//private Date creationTime;
-	private Date expirationTimeStamp;
+	private long expirationTimeStamp;
 	
 	//private static int Cookie_Age=120;
 
@@ -22,7 +22,7 @@ public class SessionState {
 		setSessionID(UUID.randomUUID().toString());   //generates globally unique ID
 		setSessionMessage("Hello User");
 		setSessionVersion(1);
-		setExpirationTimeStamp(new Date());  //initial expiry time set as current date
+		setExpirationTimeStamp(System.currentTimeMillis());  //initial expiry time set as current date
 		
 	}
 	public Integer incrementVersion()
@@ -55,14 +55,14 @@ public class SessionState {
 	}
 
 
-	public Date getExpirationTimeStamp() {
+	public Long getExpirationTimeStamp() {
 		return expirationTimeStamp;
 	}
 
-	public void setExpirationTimeStamp(Date expirationTimeStamp) {
+	public void setExpirationTimeStamp(long expirationTimeStamp) {
 		this.expirationTimeStamp = expirationTimeStamp;
 	}
-	public void refresh(Date newExpiry)
+	public void refresh(long newExpiry)
 	{
 		//Calendar cal = Calendar.getInstance();
 		//cal.add(Calendar.SECOND, UserSession.COOKIE_AGE);
@@ -70,11 +70,10 @@ public class SessionState {
 	}
 	public boolean isExpired()
 	{
-		if(this.expirationTimeStamp.before(new Date()))
+		if(this.expirationTimeStamp < System.currentTimeMillis())
 			return true;
 		
 		return false;
 	}
-	
 	
 }

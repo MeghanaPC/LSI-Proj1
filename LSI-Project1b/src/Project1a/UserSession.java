@@ -35,7 +35,7 @@ public class UserSession {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.SECOND, COOKIE_AGE); 
 		Date expirytime=cal.getTime();
-		sessionstate.setExpirationTimeStamp(expirytime);
+		sessionstate.setExpirationTimeStamp(expirytime.getTime());
 	}
 	/**
 	 * set maxage to 0 so that the cookie will be removed by browser
@@ -62,7 +62,8 @@ public class UserSession {
 		
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.SECOND, COOKIE_AGE);
-		sessionstate.setExpirationTimeStamp(cal.getTime());
+		Date expirytime=cal.getTime();
+		sessionstate.setExpirationTimeStamp(expirytime.getTime());
 		mycookie.setVersion(sessionstate.incrementVersion());
 		mycookie.setMaxAge(COOKIE_AGE);
 		return mycookie;

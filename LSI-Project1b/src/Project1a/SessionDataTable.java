@@ -1,5 +1,4 @@
 package Project1a;
-import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -35,7 +34,7 @@ public class SessionDataTable extends ConcurrentHashMap<String, SessionState> {
 	{
 		return getSession(sessionID).getSessionVersion();
 	}
-	public Date getCurrentExpirytime(String sessionID)
+	public long getCurrentExpirytime(String sessionID)
 	{
 		return getSession(sessionID).getExpirationTimeStamp();
 	}
@@ -46,7 +45,7 @@ public class SessionDataTable extends ConcurrentHashMap<String, SessionState> {
 	{
 		for(Entry<String, SessionState> e:this.entrySet())
 		{
-			if(e.getValue().getExpirationTimeStamp().before(new Date()))
+			if(e.getValue().getExpirationTimeStamp() < System.currentTimeMillis())
 					this.remove(e.getKey());
 		}
 	}
@@ -55,7 +54,7 @@ public class SessionDataTable extends ConcurrentHashMap<String, SessionState> {
 	 * @param sessionID
 	 * @param newExpiry
 	 */
-	public void refreshTime(String sessionID,Date newExpiry)
+	public void refreshTime(String sessionID,long newExpiry)
 	{
 		SessionState currentstate=get(sessionID);
 		currentstate.refresh(newExpiry);
@@ -73,7 +72,7 @@ public class SessionDataTable extends ConcurrentHashMap<String, SessionState> {
 	 * @param newmessage
 	 * @param newExpiry
 	 */
-	public void update(String sessionID,String newmessage,Date newExpiry)
+	public void update(String sessionID,String newmessage,long newExpiry)
 	{
 		SessionState currentstate=get(sessionID);
 		currentstate.refresh(newExpiry);
