@@ -54,7 +54,7 @@ public class RPCServer implements Runnable{
 	}
 	public String generateReply(String data)
 	{
-		String result=null;
+		String result="";
 		String[] receivedData=data.split(DELIMITER);
 		result+=receivedData[0].trim()+DELIMITER;
 		 int operationCode =Integer.parseInt(receivedData[1].trim());
@@ -62,7 +62,7 @@ public class RPCServer implements Runnable{
 		 {
 			 //received format=callID,opcode,sessionID
 			 SessionState sessionObj=ServletForSession.sessiontable.get(receivedData[2].trim());
-			 String sessionString=null;
+			 String sessionString="";
 			 if(sessionObj!=null)
 			 {
 				// sending format=callID,sessionID,version,message,timestamp
