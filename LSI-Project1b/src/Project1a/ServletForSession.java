@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//import View.*;
+import View.*;
 
 /**
  * @author trupti
@@ -35,7 +35,8 @@ public class ServletForSession extends HttpServlet {
      */
     public ServletForSession() {
         super();
-  
+        ServerView.serverView serverView
+        
     }
 
     /**
@@ -52,7 +53,6 @@ public class ServletForSession extends HttpServlet {
 		Cookie[] cookie_array = request.getCookies();
 		MyCookie cookie;
 		String sessionID=getSessionID(cookie_array);
-		
 		if(sessionID==null)
 		{
 			cookie=usersession.createNewUserSession();

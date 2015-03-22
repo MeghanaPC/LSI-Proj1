@@ -8,11 +8,7 @@ import java.util.Set;
 
 public class viewDaemon  implements Runnable{
 	
-	HashMap<String, String> ServerView;
-	
-	public viewDaemon(HashMap<String, String> setView) {
-		ServerView = setView;
-	}
+	//HashMap<String, String> ServerView;
 	
 	@Override
 	public void run(){
@@ -20,13 +16,13 @@ public class viewDaemon  implements Runnable{
 		Double randomProbability = 0.0;
 		while(true){
 			try {
-				numProbability = (double) (1/ServerView.size());
+				numProbability = (double) (1/ServerView.serverView.size());
 				Random random = new Random();
 				randomProbability = random.nextDouble();
 				
 				if (numProbability > randomProbability) {
 					
-					Set<String> serverList = ServerView.keySet();
+					Set<String> serverList = ServerView.serverView.keySet();
 					java.util.Collections.shuffle((List<?>) serverList);
 					Iterator serverIterator = serverList.iterator();
 					String chosenServer = (String) serverIterator.next();
