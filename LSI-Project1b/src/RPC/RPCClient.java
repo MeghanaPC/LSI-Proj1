@@ -16,7 +16,7 @@ public class RPCClient {
 		private static final int portProj1bRPC   =   5300;
 		private static int callID=0;
 		private static final int timeOut=10000;
-		private static String DELIMITER = "|";
+		private static String DELIMITER = "=";
 		private static int OPCODE_READ = 1;
 		private static int OPCODE_WRITE = 2;
 		private static int OPCODE_VIEW = 3;

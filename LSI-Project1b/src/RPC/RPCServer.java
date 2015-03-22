@@ -13,7 +13,7 @@ public class RPCServer implements Runnable{
 
 		private static final int portProj1bRPC   =   5300;
 		private static final int maxPacketSize=512;
-		private static String DELIMITER = "|";
+		private static String DELIMITER = "=";
 		private static int OPCODE_READ = 1;
 		private static int OPCODE_WRITE = 2;
 		private static int OPCODE_VIEW = 3;
