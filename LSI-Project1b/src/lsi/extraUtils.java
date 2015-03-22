@@ -1,6 +1,7 @@
 package lsi;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,6 +14,8 @@ public class extraUtils {
 	
 	private static final String DELIMITER_LEVEL1= "-";
 	private static final String DELIMITER_LEVEL2 = "_";
+	private static final String upState="UP";
+	private static final String downState="DOWN";
 
 	public static ConcurrentHashMap<String, String> stringToHashMap(String toBeParsed){
 		
@@ -62,8 +65,8 @@ public class extraUtils {
 				String parseValueA = mapA.get(keyA);
 				String parseValueB = mapB.get(keyA);
 				
-				String[] splitValueA = parseValueA.split("_");
-				String[] splitValueB = parseValueB.split("_");
+				String[] splitValueA = parseValueA.split(DELIMITER_LEVEL2);
+				String[] splitValueB = parseValueB.split(DELIMITER_LEVEL2);
 				
 				if (Long.parseLong(splitValueA[1].trim()) >= Long.parseLong(splitValueB[1].trim())) {
 					mapM.put(keyA, parseValueA);
@@ -82,6 +85,17 @@ public class extraUtils {
 		}	
 		return mapM;
 	}
+	public static void UpdateView(List<String> serverID,String state)
+	{
+		if(state.equals(upState)||state.equals(downState))  //just checking currect state is passed
+		{
+			for(String svr:serverID)
+			{
+				String newvalue=System.currentTimeMillis()+DELIMITER_LEVEL2+state;
+				View.ServerView.serverView.put(svr,newvalue);
+			}
+		}
+	}
 	
 	
 //	For testing purposes
@@ -92,5 +106,6 @@ public class extraUtils {
 		
 		System.out.println(hashMapToString(demoMap));
 	}
+	
 	 
 }
