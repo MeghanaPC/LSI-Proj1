@@ -1,6 +1,5 @@
 package RPC;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -102,7 +101,7 @@ public class RPCServer implements Runnable {
 			String sendView = lsi.ViewManager.hashMapToString(Myview);
 			// sending format=callID , viewstring
 			result += sendView;
-			// merging code
+			lsi.ViewManager.mergeViewWithSelf(mergedView);
 
 		}
 		return result;

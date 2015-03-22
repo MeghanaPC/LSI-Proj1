@@ -1,13 +1,9 @@
 package lsi;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.swing.text.StyledEditorKit.ForegroundAction;
-
-import View.*;
 
 
 public class ViewManager {
@@ -44,12 +40,12 @@ public class ViewManager {
 		return resultBuilder.toString().substring(0, length-1);
 	}
 	
-	public static void iterateHashMap(ConcurrentHashMap<String, String> hMap){
+	/*public static void iterateHashMap(ConcurrentHashMap<String, String> hMap){
 		
 		for(String key:hMap.keySet()){
 			System.out.println(key + " " + hMap.get(key));
 		}
-	}
+	}*/
 	
 	public static ConcurrentHashMap<String, String> mergeViews(ConcurrentHashMap<String, String> mapA, ConcurrentHashMap<String, String> mapB) {
 		
@@ -89,10 +85,13 @@ public class ViewManager {
 	{
 		if(state.equals(upState)||state.equals(downState))  //just checking currect state is passed
 		{
-			for(String svr:serverID)
+			synchronized(View.ServerView.serverView)
 			{
-				String newvalue=System.currentTimeMillis()+DELIMITER_LEVEL2+state;
-				View.ServerView.serverView.put(svr,newvalue);
+				for(String svr:serverID)
+				{
+					String newvalue=System.currentTimeMillis()+DELIMITER_LEVEL2+state;
+					View.ServerView.serverView.put(svr,newvalue);
+				}
 			}
 		}
 	}
@@ -100,25 +99,35 @@ public class ViewManager {
 	public static Set<String> getActiveServersList(ConcurrentHashMap<String, String> map){
 		
 		Set<String> keySet = map.keySet();
-		Set<String> resultSet = keySet;
+		Set<String> resultSet = new HashSet<String>();
+		resultSet=keySet;
 		for(String server:keySet){
 			String tupleString = map.get(server);
 			String[] parseTuple = tupleString.split(DELIMITER_LEVEL2);
-			if (parseTuple[0].equals("down")) {
+			if (parseTuple[0].equals(downState)) {
 				resultSet.remove(server);
 			}
 		}
 		return resultSet;
 	}
+public static void mergeViewWithSelf(ConcurrentHashMap<String, String> newMerged) {
+		
+		synchronized(View.ServerView.serverView)
+		{
+			View.ServerView.serverView.clear();
+			View.ServerView.serverView.putAll(newMerged);
+		}
+		
+	}
 	
 //	For testing purposes
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		
 		ConcurrentHashMap<String, String> demoMap = stringToHashMap("server1_up_123456-server2_down_345678");
 //		iterateHashMap(demoMap);
 		
 		System.out.println(hashMapToString(demoMap));
-	}
+	}*/
 	
 	 
 }

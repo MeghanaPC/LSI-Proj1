@@ -6,7 +6,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,7 +22,7 @@ public class RPCClient {
 	private static int OPCODE_WRITE = 2;
 	private static int OPCODE_VIEW = 3;
 	private static String ack = "SUCCESS";
-
+	
 	//
 	// SessionReadClient(sessionID)
 	// sending to multiple destAddrs, all at port = portProj1bRPC
@@ -62,9 +61,7 @@ public class RPCClient {
 					// received
 					// format=callID,sessionID,version,message,timestamp
 					String[] output = receivedString.split(DELIMITER);
-					if (checkCallIDVersion(Integer.parseInt(output[2].trim()),
-							sessionObj.getSessionVersion(),
-							Integer.parseInt(output[0].trim()), callID)) {
+					if (checkCallIDVersion(Integer.parseInt(output[2].trim()),sessionObj.getSessionVersion(),Integer.parseInt(output[0].trim()), callID)) {
 						flag = false;
 
 						// only when same version number and callID is matched
@@ -80,7 +77,7 @@ public class RPCClient {
 					}
 				}
 
-			} while (true);
+			} while (flag==true);
 		} catch (SocketTimeoutException stoe) {
 			// timeout
 			return null;
@@ -90,6 +87,7 @@ public class RPCClient {
 		} finally {
 			rpcSocket.close();
 		}
+		return null;
 	}
 
 	private boolean checkCallIDVersion(int recVersion, int currVersion,
