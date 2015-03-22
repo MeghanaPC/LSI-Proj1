@@ -16,12 +16,13 @@ public class viewDaemon  implements Runnable{
 		Double randomProbability = 0.0;
 		while(true){
 			try {
+				//take only the up servers
 				numProbability = (double) (1/ServerView.serverView.size());
 				Random random = new Random();
 				randomProbability = random.nextDouble();
 				
-				if (numProbability > randomProbability) {
-					
+				if (numProbability < randomProbability) {
+					//add self,up,now
 					Set<String> serverList = ServerView.serverView.keySet();
 					java.util.Collections.shuffle((List<?>) serverList);
 					Iterator serverIterator = serverList.iterator();
