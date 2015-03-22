@@ -99,10 +99,10 @@ public class RPCServer implements Runnable{
 			 ConcurrentHashMap Myview=new ConcurrentHashMap<String,String>();
 			 Myview=View.ServerView.serverView;
 			 ConcurrentHashMap receivedview=new ConcurrentHashMap<String,String>();
-			 receivedview=lsi.extraUtils.stringToHashMap(receivedData[2].trim());
+			 receivedview=lsi.ViewManager.stringToHashMap(receivedData[2].trim());
 			 ConcurrentHashMap mergedView=new ConcurrentHashMap<String,String>();
-			 lsi.extraUtils.mergeViews(Myview,receivedview);
-			 String sendView=lsi.extraUtils.hashMapToString(Myview);
+			 lsi.ViewManager.mergeViews(Myview,receivedview);
+			 String sendView=lsi.ViewManager.hashMapToString(Myview);
 			 //sending format=callID , viewstring
 			 result+=sendView;
 			 

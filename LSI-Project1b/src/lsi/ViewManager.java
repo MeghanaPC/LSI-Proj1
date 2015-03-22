@@ -10,7 +10,7 @@ import javax.swing.text.StyledEditorKit.ForegroundAction;
 import View.*;
 
 
-public class extraUtils {
+public class ViewManager {
 	
 	private static final String DELIMITER_LEVEL1= "-";
 	private static final String DELIMITER_LEVEL2 = "_";
