@@ -32,7 +32,7 @@ public class ServerView {
 		}
 	}
 	
-//	Merges two views based on latest timestamp policy
+//	Merges two views based on latest timestamp policy 
 	public ConcurrentHashMap<String, String> mergeViews(ConcurrentHashMap<String, String> mapA, ConcurrentHashMap<String, String> mapB) {
 		
 		ConcurrentHashMap<String, String> mapM = new ConcurrentHashMap<String, String>();
