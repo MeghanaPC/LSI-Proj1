@@ -138,7 +138,7 @@ public class RPCClient {
 					if (output[1].trim().equals(ack)) {
 						k_ack = k_ack + 1;
 						InetAddress returnAddr = recvPkt.getAddress();
-						String[] temp = returnAddr.toString().split("/");
+						String[] temp = returnAddr.toString().split("/");   //needs to be checked
 						backups.add(temp[1].trim());
 					}
 				}
