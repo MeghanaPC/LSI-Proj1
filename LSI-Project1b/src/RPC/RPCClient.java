@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import Project1a.SessionState;
 
@@ -159,8 +160,8 @@ public class RPCClient {
 
 	}
 
-	public HashMap<String, String> ExchangeViewClient(String dest,
-			HashMap<String, String> view) throws Exception {
+	public ConcurrentHashMap<String, String> ExchangeViewClient(String dest,
+			ConcurrentHashMap<String, String> view) throws Exception {
 		DatagramSocket rpcSocket = new DatagramSocket();
 		rpcSocket.setSoTimeout(timeOut);
 		try {
@@ -191,7 +192,7 @@ public class RPCClient {
 				receivedString = new String(inBuf).split(DELIMITER);
 				if (Integer.parseInt(receivedString[0].trim()) == callID) {
 					String ResultviewString = receivedString[1].trim();
-					HashMap<String, String> resultview = new HashMap<String, String>();
+					ConcurrentHashMap<String, String> resultview = new ConcurrentHashMap<String, String>();
 					String[] tuples = ResultviewString.split("-");
 					for (String s : tuples) {
 						String[] keyValue = s.split("_");
