@@ -60,7 +60,7 @@ public class RPCClient {
 						  {
 							  // received format=callID,sessionID,version,message,timestamp
 							  String[] output=receivedString.split(DELIMITER);
-							  if(checkCallIDVersion(output[2],callID))
+							  if(checkCallIDVersion(Integer.parseInt(output[2]),sessionObj.getSessionVersion(),Integer.parseInt(output[0]),callID))
 							  {
 								  flag=false;
 							  
@@ -88,10 +88,15 @@ public class RPCClient {
 				  rpcSocket.close();
 			  }
 		}
-		private boolean checkCallIDVersion(String buff,int callID)
+		private boolean checkCallIDVersion(int recVersion,int currVersion,int recCallID,int currCallID)
 		{
-			//need to implement
-			return false;
+			if(recVersion!=currVersion)
+				return false;
+			if(recCallID!=currCallID)
+				return false;
+			
+			
+			return true;
 		}
 		public List<String> SessionWriteClient(List<String> destIP,SessionState sessionObj) throws IOException
 		{

@@ -3,6 +3,8 @@ package Project1a;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -35,7 +37,7 @@ public class ServletForSession extends HttpServlet {
      */
     public ServletForSession() {
         super();
-        ServerView.serverView serverView
+        ServerView.serverView =new ConcurrentHashMap<String,String>();
         
     }
 

@@ -4,6 +4,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.concurrent.ConcurrentHashMap;
 
 import Project1a.SessionState;
 import Project1a.ServletForSession;
@@ -86,6 +87,7 @@ public class RPCServer implements Runnable{
 			 object.setSessionVersion(Integer.parseInt(receivedData[4]));
 			 object.setExpirationTimeStamp(Long.parseLong(receivedData[5]));
 			 
+			 //sending format = callID, ack
 			 ServletForSession.sessiontable.put(object.getSessionID(), object);
 			 result+=ack;
 			 
@@ -93,16 +95,21 @@ public class RPCServer implements Runnable{
 		 }
 		 else if(operationCode==OPCODE_VIEW)
 		 {
+			 //received format = callID,opcode, stringOfTuples
+			 ConcurrentHashMap Myview=new ConcurrentHashMap<String,String>();
+			 Myview=View.ServerView.serverView;
+			 ConcurrentHashMap receivedview=new ConcurrentHashMap<String,String>();
+			 receivedview=lsi.extraUtils.stringToHashMap(receivedData[2]);
+			 ConcurrentHashMap mergedView=new ConcurrentHashMap<String,String>();
+			 lsi.extraUtils.mergeViews(Myview,receivedview);
+			 String sendView=lsi.extraUtils.hashMapToString(Myview);
+			 //sending format=callID , viewstring
+			 result+=sendView;
 			 
 		 }
+		 return result;
 		 
-		 
-	    
-		
-		 
-		 //append with callID*/
-		
-		return result;
+	
 		
 	}
 	
