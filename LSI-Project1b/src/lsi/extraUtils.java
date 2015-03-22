@@ -21,7 +21,7 @@ public class extraUtils {
 		
 		for(String entry:tuples){
 			String[] parseEntry = entry.split(DELIMITER_LEVEL2);
-			resultMap.put(parseEntry[0], parseEntry[1]+DELIMITER_LEVEL2+parseEntry[2]);
+			resultMap.put(parseEntry[0].trim(), parseEntry[1].trim()+DELIMITER_LEVEL2+parseEntry[2].trim());
 		}
 		
 		return resultMap;
@@ -65,7 +65,7 @@ public class extraUtils {
 				String[] splitValueA = parseValueA.split("_");
 				String[] splitValueB = parseValueB.split("_");
 				
-				if (Long.parseLong(splitValueA[1]) >= Long.parseLong(splitValueB[1])) {
+				if (Long.parseLong(splitValueA[1].trim()) >= Long.parseLong(splitValueB[1].trim())) {
 					mapM.put(keyA, parseValueA);
 				}
 				else {
