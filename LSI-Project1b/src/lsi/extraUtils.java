@@ -10,10 +10,10 @@ import View.*;
 
 public class extraUtils {
 	
-	private final String DELIMITER_LEVEL1= "-";
-	private final String DELIMITER_LEVEL2 = "_";
+	private static final String DELIMITER_LEVEL1= "-";
+	private static final String DELIMITER_LEVEL2 = "_";
 
-	public ConcurrentHashMap<String, String> stringToHashMap(String toBeParsed){
+	public static ConcurrentHashMap<String, String> stringToHashMap(String toBeParsed){
 		
 		ConcurrentHashMap<String, String> resultMap = new ConcurrentHashMap<String, String>();
 		String[] tuples = toBeParsed.split(DELIMITER_LEVEL1);
@@ -24,6 +24,14 @@ public class extraUtils {
 		}
 		
 		return resultMap;
+	}
+	
+	public static String hashMapToString(ConcurrentHashMap<String, String> map){
+		
+		String result = "blah";
+		//StringBuilder
+		
+		return result;
 	}
 	
 //	For testing purposes
