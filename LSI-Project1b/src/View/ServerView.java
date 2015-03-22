@@ -3,29 +3,29 @@ package View;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class ServerView {
 	
-	private final String dELIMITER_STRINGString = "_";
 	
-	public static HashMap<String,String> serverView;
+	public static ConcurrentHashMap<String,String> serverView;
 	
 	public ServerView()
 	{
-		serverView=new HashMap<String,String>();
+		serverView=new ConcurrentHashMap<String,String>();
 	}
-	public HashMap<String,String> getServerView()
+	public ConcurrentHashMap<String,String> getServerView()
 	{
 		return serverView;
 	}
-	public void setServerView(HashMap<String,String> view)
+	public void setServerView(ConcurrentHashMap<String,String> view)
 	{
 		serverView=view;
 	}
 	
 //	for debugging purposes
-	private void iterateHashMap(HashMap<String, String> hMap){
+	public void iterateHashMap(ConcurrentHashMap<String, String> hMap){
 		
 		for(String key:hMap.keySet()){
 			System.out.println(key + " " + hMap.get(key));
@@ -33,9 +33,9 @@ public class ServerView {
 	}
 	
 //	Merges two views based on latest timestamp policy
-	public HashMap<String, String> mergeViews(HashMap<String, String> mapA, HashMap<String, String> mapB) {
+	public ConcurrentHashMap<String, String> mergeViews(ConcurrentHashMap<String, String> mapA, ConcurrentHashMap<String, String> mapB) {
 		
-		HashMap<String, String> mapM = new HashMap<String, String>();
+		ConcurrentHashMap<String, String> mapM = new ConcurrentHashMap<String, String>();
 		Set<String> keysetA = mapA.keySet();
 		Set<String> keysetB = mapB.keySet();
 		
