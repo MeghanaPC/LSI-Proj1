@@ -56,12 +56,12 @@ public class RPCServer implements Runnable{
 	{
 		String result=null;
 		String[] receivedData=data.split(DELIMITER);
-		result+=receivedData[0]+DELIMITER;
-		 int operationCode =Integer.parseInt(receivedData[1]);
+		result+=receivedData[0].trim()+DELIMITER;
+		 int operationCode =Integer.parseInt(receivedData[1].trim());
 		 if(operationCode==OPCODE_READ)
 		 {
 			 //received format=callID,opcode,sessionID
-			 SessionState sessionObj=ServletForSession.sessiontable.get(receivedData[2]);
+			 SessionState sessionObj=ServletForSession.sessiontable.get(receivedData[2].trim());
 			 String sessionString=null;
 			 if(sessionObj!=null)
 			 {
@@ -82,10 +82,10 @@ public class RPCServer implements Runnable{
 		 {
 			 //received format=callID,opcode,sessionID,message,version,timestamp
 			 SessionState object=new SessionState();
-			 object.setSessionID(receivedData[2]);
-			 object.setSessionMessage(receivedData[3]);
-			 object.setSessionVersion(Integer.parseInt(receivedData[4]));
-			 object.setExpirationTimeStamp(Long.parseLong(receivedData[5]));
+			 object.setSessionID(receivedData[2].trim());
+			 object.setSessionMessage(receivedData[3].trim());
+			 object.setSessionVersion(Integer.parseInt(receivedData[4].trim()));
+			 object.setExpirationTimeStamp(Long.parseLong(receivedData[5].trim()));
 			 
 			 //sending format = callID, ack
 			 ServletForSession.sessiontable.put(object.getSessionID(), object);
@@ -99,7 +99,7 @@ public class RPCServer implements Runnable{
 			 ConcurrentHashMap Myview=new ConcurrentHashMap<String,String>();
 			 Myview=View.ServerView.serverView;
 			 ConcurrentHashMap receivedview=new ConcurrentHashMap<String,String>();
-			 receivedview=lsi.extraUtils.stringToHashMap(receivedData[2]);
+			 receivedview=lsi.extraUtils.stringToHashMap(receivedData[2].trim());
 			 ConcurrentHashMap mergedView=new ConcurrentHashMap<String,String>();
 			 lsi.extraUtils.mergeViews(Myview,receivedview);
 			 String sendView=lsi.extraUtils.hashMapToString(Myview);

@@ -29,13 +29,14 @@ public class RPCClient {
 	  //
 		public SessionState SessionReadClient(List<String> destIP,SessionState sessionObj) throws IOException
 		{
+			//format to send = callID, opcode,sessionID
 			  boolean flag=true;
 			  DatagramSocket rpcSocket = new DatagramSocket();
 			  rpcSocket.setSoTimeout(timeOut);
 			  callID = callID+1;
 			  String dataToSend=callID+
-								  DELIMITER+sessionObj.getSessionID()+
-								  DELIMITER+OPCODE_READ;
+								  DELIMITER+OPCODE_READ+
+								  DELIMITER+sessionObj.getSessionID();
 			  byte[] outBuf = new byte[maxPacketSize];
 			  outBuf=dataToSend.getBytes();
 			 // DatagramPacket sendPkt = new DatagramPacket(outBuf, outBuf.length, IP, portProj1bRPC);
@@ -57,16 +58,16 @@ public class RPCClient {
 						  {
 							  // received format=callID,sessionID,version,message,timestamp
 							  String[] output=receivedString.split(DELIMITER);
-							  if(checkCallIDVersion(Integer.parseInt(output[2]),sessionObj.getSessionVersion(),Integer.parseInt(output[0]),callID))
+							  if(checkCallIDVersion(Integer.parseInt(output[2].trim()),sessionObj.getSessionVersion(),Integer.parseInt(output[0].trim()),callID))
 							  {
 								  flag=false;
 							  
 								  //only when same version number and callID is matched
 								  SessionState returnObj=new SessionState();
-								  returnObj.setExpirationTimeStamp(Long.parseLong(output[4]));
-								  returnObj.setSessionID(output[1]);
-								  returnObj.setSessionMessage(output[3]);
-								  returnObj.setSessionVersion(Integer.parseInt(output[2]));
+								  returnObj.setExpirationTimeStamp(Long.parseLong(output[4].trim()));
+								  returnObj.setSessionID(output[1].trim());
+								  returnObj.setSessionMessage(output[3].trim());
+								  returnObj.setSessionVersion(Integer.parseInt(output[2].trim()));
 								  
 								  return returnObj;
 							  }
@@ -131,12 +132,12 @@ public class RPCClient {
 								  //format = CallID , ack
 								  String[] output=receivedString.split(DELIMITER);
 								 
-								  if(output[1].equals(ack))
+								  if(output[1].trim().equals(ack))
 								  {
 									  k_ack=k_ack+1;
 									  InetAddress returnAddr = recvPkt.getAddress();
 									  String[] temp=returnAddr.toString().split("/");
-									  backups.add(temp[1]);
+									  backups.add(temp[1].trim());
 								  } 
 							  }
 					  }while(k_ack!=destIP.size());
@@ -188,21 +189,21 @@ public class RPCClient {
 					recvPkt.setLength(inBuf.length);
 					rpcSocket.receive(recvPkt);
 					receivedString=new String(inBuf).split(DELIMITER);
-					if(Integer.parseInt(receivedString[0])==callID)
+					if(Integer.parseInt(receivedString[0].trim())==callID)
 					{
-						String ResultviewString=receivedString[1];
+						String ResultviewString=receivedString[1].trim();
 						HashMap<String,String> resultview=new HashMap<String,String>();
 						String[] tuples=ResultviewString.split("-");
 						for(String s:tuples)
 						{
 							String[] keyValue=s.split("_");
-							resultview.put(keyValue[0], keyValue[1]+"_"+keyValue[2]);
+							resultview.put(keyValue[0].trim(), keyValue[1].trim()+"_"+keyValue[2].trim());
 						}
 						return resultview;
 					}
 					
 				 
-				}while(Integer.parseInt(receivedString[0])!=callID);
+				}while(Integer.parseInt(receivedString[0].trim())!=callID);
 				return null;
 			 }
 			 catch(SocketTimeoutException stoe) 
