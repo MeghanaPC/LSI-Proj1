@@ -97,6 +97,19 @@ public class ViewManager {
 		}
 	}
 	
+	public static Set<String> getActiveServersList(ConcurrentHashMap<String, String> map){
+		
+		Set<String> keySet = map.keySet();
+		Set<String> resultSet = keySet;
+		for(String server:keySet){
+			String tupleString = map.get(server);
+			String[] parseTuple = tupleString.split(DELIMITER_LEVEL2);
+			if (parseTuple[0].equals("down")) {
+				resultSet.remove(server);
+			}
+		}
+		return resultSet;
+	}
 	
 //	For testing purposes
 	public static void main(String[] args) {

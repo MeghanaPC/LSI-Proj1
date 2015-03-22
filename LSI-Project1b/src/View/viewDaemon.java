@@ -1,31 +1,34 @@
 package View;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import lsi.ViewManager;
+
 public class viewDaemon  implements Runnable{
 	
-	//HashMap<String, String> ServerView;
+//	Need to fix this to a value
+	private final int GOSSIP_SECS = 10;
 	
 	@Override
 	public void run(){
 		Double numProbability = 0.0;
 		Double randomProbability = 0.0;
+		Set<String> serverList = ViewManager.getActiveServersList(ServerView.serverView);
 		while(true){
 			try {
 				//take only the up servers
-				numProbability = (double) (1/ServerView.serverView.size());
+				numProbability = (double) (1/serverList.size());
 				Random random = new Random();
 				randomProbability = random.nextDouble();
 				
 				if (numProbability < randomProbability) {
 					//add self,up,now
-					Set<String> serverList = ServerView.serverView.keySet();
+					
 					java.util.Collections.shuffle((List<?>) serverList);
-					Iterator serverIterator = serverList.iterator();
+					Iterator<String> serverIterator = serverList.iterator();
 					String chosenServer = (String) serverIterator.next();
 					
 //					RPC to chosen server
@@ -36,7 +39,7 @@ public class viewDaemon  implements Runnable{
 //					SimpleDB shenanigans
 					
 				}
-				Thread.sleep(new Random().nextLong() * 10000);
+				Thread.sleep((GOSSIP_SECS/2) + new Random().nextInt(GOSSIP_SECS));
 				
 			} catch (Exception e) {
 				e.printStackTrace();
