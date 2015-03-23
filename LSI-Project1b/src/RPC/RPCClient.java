@@ -9,13 +9,14 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.UUID;
 
 import Project1a.*;
 
 public class RPCClient {
 	private static final int maxPacketSize = 512;
 	private static final int portProj1bRPC = 5300;
-	private static int callID = 0;
+	//private static int callID = 0;
 	private static final int timeOut = 10000;
 	private static String DELIMITER = "=";
 	private static int OPCODE_READ = 1;
@@ -34,14 +35,17 @@ public class RPCClient {
 	// sending to multiple destAddrs, all at port = portProj1bRPC
 	// creating new DatagramSocket object rpcSocket
 	// and closing it when done
-	//
+	
+	
+	//sessionObj should contain stuff from Cookie
 	public static SessionInfo SessionReadClient(List<String> destIP,
 			String SessionID,SessionInfo sessionObj) throws Exception {
 		// format to send = callID, opcode,sessionID
 		boolean flag = true;
 		DatagramSocket rpcSocket = new DatagramSocket();
 		rpcSocket.setSoTimeout(timeOut);
-		callID = callID + 1;
+		UUID callID = UUID.randomUUID();
+		
 		String dataToSend = callID + DELIMITER + OPCODE_READ + DELIMITER+ SessionID;
 		byte[] outBuf = new byte[maxPacketSize];
 		outBuf = dataToSend.getBytes();
@@ -74,7 +78,7 @@ public class RPCClient {
 					// received format=callID,sessionID,version,message,timestamp
 					String[] output = receivedString.split(DELIMITER);
 					
-					if (checkCallIDVersion(Integer.parseInt(output[2].trim()),sessionObj.getVersion(),Integer.parseInt(output[0].trim()), callID)) {
+					if (checkCallIDVersion(Integer.parseInt(output[1].trim()),sessionObj.getVersion(),output[0].trim(), callID.toString())) {
 						flag = false;
 
 						// only when same version number and callID is matched
@@ -101,10 +105,10 @@ public class RPCClient {
 	}
 
 	private static boolean checkCallIDVersion(int recVersion, int currVersion,
-			int recCallID, int currCallID) {
+			String recCallID, String currCallID) {
 		if (recVersion != currVersion)
 			return false;
-		if (recCallID != currCallID)
+		if (recCallID.equals(currCallID))
 			return false;
 
 		return true;
@@ -115,7 +119,7 @@ public class RPCClient {
 		DatagramSocket rpcSocket = new DatagramSocket();
 		try {
 			rpcSocket.setSoTimeout(timeOut);
-			callID = callID + 1;
+			UUID callID = UUID.randomUUID();
 			String dataToSend = callID + DELIMITER + OPCODE_WRITE + DELIMITER
 					+ sessionID + DELIMITER
 					+ sessionObj.getMessage()+ DELIMITER
@@ -142,12 +146,14 @@ public class RPCClient {
 				if (receivedString != null) {
 					// format = CallID , ack
 					String[] output = receivedString.split(DELIMITER);
-
-					if (output[1].trim().equals(ack)) {
-						k_ack = k_ack + 1;
-						InetAddress returnAddr = recvPkt.getAddress();
-						String[] temp = returnAddr.toString().trim().split("/");   //needs to be checked
-						backups.add(temp[1].trim());
+					if(output[0].trim().equals(callID))
+					{
+						if (output[1].trim().equals(ack)) {
+							k_ack = k_ack + 1;
+							InetAddress returnAddr = recvPkt.getAddress();
+							String[] temp = returnAddr.toString().trim().split("/");   //needs to be checked
+							backups.add(temp[1].trim());
+						}
 					}
 				}
 			} while (k_ack != destIP.size());
@@ -183,7 +189,7 @@ public class RPCClient {
 		DatagramSocket rpcSocket = new DatagramSocket();
 		rpcSocket.setSoTimeout(timeOut);
 		try {
-			callID = callID + 1;
+			UUID callID = UUID.randomUUID();
 			InetAddress IP = InetAddress.getByName(dest);
 			String viewString = null;
 			viewString=lsi.ViewManager.hashMapToString(view);
@@ -214,19 +220,16 @@ public class RPCClient {
 				
 				
 				receivedString = new String(inBuf).split(DELIMITER);
-				if (Integer.parseInt(receivedString[0].trim()) == callID) {
+				if (receivedString[0].trim().equals(callID)) {
 					String ResultviewString = receivedString[1].trim();
 					ConcurrentHashMap<String, String> resultview = new ConcurrentHashMap<String, String>();
-					String[] tuples = ResultviewString.split(DELIMITER_LEVEL1);
-					for (String s : tuples) {
-						String[] keyValue = s.split(DELIMITER_LEVEL2);
-						resultview.put(keyValue[0].trim(), keyValue[1].trim()
-								+ DELIMITER_LEVEL2 + keyValue[2].trim());
-					}
+					
+					resultview=lsi.ViewManager.stringToHashMap(ResultviewString);
+					
 					return resultview;
 				}
 
-			} while (Integer.parseInt(receivedString[0].trim()) != callID);
+			} while (!receivedString[0].trim().equals(callID));
 			return null;
 		} catch (SocketTimeoutException stoe) {
 			// timeout
