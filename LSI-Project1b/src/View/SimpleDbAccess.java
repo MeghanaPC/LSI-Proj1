@@ -21,6 +21,12 @@ public class SimpleDbAccess {
 	// returns true if the domain was created
 	public static boolean createSimpleDbDomainIfNotExists() {
 
+		if (sdb == null) {
+			sdb = new AmazonSimpleDBClient(new BasicAWSCredentials(
+					"AKIAIXCNDMOAWSH7JEJA",
+					"EoZEMMGkTgRcYVwn3hUPdz7BRkSXhSUuaczQkOZU"));
+		}
+		
 		ArrayList<String> existingDomains = new ArrayList<String>();
 		String nextToken = null;
 		do {
