@@ -69,17 +69,19 @@ public class RPCClient {
 				recvPkt.setLength(inBuf.length);
 				rpcSocket.receive(recvPkt);
 				
-				//updating entry of the responded to UP, even if it's version or callID doesn't match
-				InetAddress returnAddr = recvPkt.getAddress();
-				String[] temp = returnAddr.toString().trim().split("/"); 
-				List<String> serverIDlist=new ArrayList<String>();
-				serverIDlist.add(temp[1].trim());
-				lsi.ViewManager.UpdateView(serverIDlist,upState);
-				
 				
 				String receivedString = new String(inBuf);
 				
 				if (receivedString != null) {
+					
+					//updating entry of the responded to UP, even if it's version or callID doesn't match
+					InetAddress returnAddr = recvPkt.getAddress();
+					String[] temp = returnAddr.toString().trim().split("/"); 
+					List<String> serverIDlist=new ArrayList<String>();
+					serverIDlist.add(temp[1].trim());
+					lsi.ViewManager.UpdateView(serverIDlist,upState);
+					
+					
 					// received format=callID,version,message,timestamp
 					String[] output = receivedString.split(DELIMITER);
 					
@@ -99,6 +101,8 @@ public class RPCClient {
 			} while (flag==true);
 		} catch (SocketTimeoutException stoe) {
 			// timeout
+			//set all to down
+			lsi.ViewManager.UpdateView(destIP,downState);
 			return null;
 		} catch (IOException ioe) {
 			// other error
@@ -213,27 +217,33 @@ public class RPCClient {
 			DatagramPacket recvPkt = new DatagramPacket(inBuf, inBuf.length);
 
 			// format = CallID, viewString
+			
 			String[] receivedString = null;
 			do {
 				recvPkt.setLength(inBuf.length);
 				rpcSocket.receive(recvPkt);
 				
-				//updating responded to upstate
-				InetAddress returnAddr = recvPkt.getAddress();
-				String[] temp = returnAddr.toString().trim().split("/"); 
-				List<String> serverIDlist=new ArrayList<String>();
-				serverIDlist.add(temp[1].trim());
-				lsi.ViewManager.UpdateView(serverIDlist,upState);
-				
-				
-				receivedString = new String(inBuf).split(DELIMITER);
-				if (Integer.parseInt(receivedString[0].trim())==callIDLocal) {
-					String ResultviewString = receivedString[1].trim();
-					ConcurrentHashMap<String, String> resultview = new ConcurrentHashMap<String, String>();
+				String received = new String(inBuf);
+				if (received != null) {
 					
-					resultview=lsi.ViewManager.stringToHashMap(ResultviewString);
+				
+					//updating responded to upstate
+					InetAddress returnAddr = recvPkt.getAddress();
+					String[] temp = returnAddr.toString().trim().split("/"); 
+					List<String> serverIDlist=new ArrayList<String>();
+					serverIDlist.add(temp[1].trim());
+					lsi.ViewManager.UpdateView(serverIDlist,upState);
 					
-					return resultview;
+					
+					receivedString = received.split(DELIMITER);
+					if (Integer.parseInt(receivedString[0].trim())==callIDLocal) {
+						String ResultviewString = receivedString[1].trim();
+						ConcurrentHashMap<String, String> resultview = new ConcurrentHashMap<String, String>();
+						
+						resultview=lsi.ViewManager.stringToHashMap(ResultviewString);
+						
+						return resultview;
+					}
 				}
 
 			} while (Integer.parseInt(receivedString[0].trim())!=callIDLocal);

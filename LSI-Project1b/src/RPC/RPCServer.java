@@ -4,6 +4,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import Project1a.*;
@@ -17,6 +19,8 @@ public class RPCServer implements Runnable {
 	private static int OPCODE_WRITE = 2;
 	private static int OPCODE_VIEW = 3;
 	private static String ack = "SUCCESS";
+	private static final String upState="UP";
+	private static final String downState="DOWN";
 	// private static final int timeOut=10000;
 
 	DatagramSocket rpcSocket;
@@ -39,13 +43,25 @@ public class RPCServer implements Runnable {
 				// here inBuf contains the callID and operationCode
 
 				byte[] outBuf = new byte[512];
-				String result = generateReply(new String(recvPkt.getData()));
-				outBuf = result.getBytes();
-
-				// here outBuf should contain the callID and results of the call
-				DatagramPacket sendPkt = new DatagramPacket(outBuf,
-						outBuf.length, returnAddr, returnPort);
-				rpcSocket.send(sendPkt);
+				String receivedString=new String(inBuf);
+				if(receivedString!=null)
+				{
+					String result = generateReply(receivedString);
+					
+					
+					//updating entry of the responded to UP of the server from which it is received
+					String[] temp = returnAddr.toString().trim().split("/"); 
+					List<String> serverIDlist=new ArrayList<String>();
+					serverIDlist.add(temp[1].trim());
+					lsi.ViewManager.UpdateView(serverIDlist,upState);
+					
+					outBuf = result.getBytes();
+	
+					// here outBuf should contain the callID and results of the call
+					DatagramPacket sendPkt = new DatagramPacket(outBuf,
+							outBuf.length, returnAddr, returnPort);
+					rpcSocket.send(sendPkt);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
