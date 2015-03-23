@@ -44,7 +44,7 @@ public class viewDaemon  implements Runnable{
 					ViewManager.mergeViewWithSelf(mergedView);
 					
 				} else {
-//					SimpleDB shenanigans
+//					//call simpleDB
 					
 				}
 				Thread.sleep((GOSSIP_SECS/2) + new Random().nextInt(GOSSIP_SECS));
