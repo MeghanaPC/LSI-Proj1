@@ -3,6 +3,8 @@ package Project1a;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,18 +28,23 @@ import View.*;
  * Servlet implementation class ServletForSession
  */
 //@WebServlet("/ServletForSession")
-public class ServletForSession extends HttpServlet {
+public class ServletForSession extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	private static boolean flag=false;
     public static SessionDataTable sessiontable=new SessionDataTable();
     public static UserSession usersession=new UserSession();
-    
+    public static InetAddress serverID;
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ServletForSession() {
         super();
         ServerView.serverView =new ConcurrentHashMap<String,String>();
+        try {
+			serverID=InetAddress.getByName("127.0.0.1");
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
         
     }
 

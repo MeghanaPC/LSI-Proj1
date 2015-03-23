@@ -4,36 +4,44 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import lsi.ViewManager;
+import Project1a.ServletForSession;
 
 public class viewDaemon  implements Runnable{
 	
+	private static final String DELIMITER_LEVEL1= "-";
+	private static final String DELIMITER_LEVEL2 = "_";
+	private static final String upState="UP";
+	private static final String downState="DOWN";
 //	Need to fix this to a value
 	private final int GOSSIP_SECS = 10;
 	
 	@Override
 	public void run(){
+		ConcurrentHashMap<String,String> destView;
 		Double numProbability = 0.0;
 		Double randomProbability = 0.0;
-		Set<String> serverList = ViewManager.getActiveServersList(ServerView.serverView);
+		ConcurrentHashMap<String, String> activeServerViewMap= ViewManager.getActiveServersList(ServerView.serverView);
 		while(true){
 			try {
-				//take only the up servers
-				numProbability = (double) (1/serverList.size());
+				numProbability = (double) (1/activeServerViewMap.size()+1);  //plus 1 coz self has been excluded but we need this list
 				Random random = new Random();
 				randomProbability = random.nextDouble();
 				
 				if (numProbability < randomProbability) {
-					//add self,up,now
+					//updating self
+					ServerView.serverView.put(ServletForSession.serverID.toString(),upState+DELIMITER_LEVEL2+System.currentTimeMillis());
 					
-					java.util.Collections.shuffle((List<?>) serverList);
-					Iterator<String> serverIterator = serverList.iterator();
+					Set<String> serverSet=activeServerViewMap.keySet();
+					java.util.Collections.shuffle((List<?>) serverSet);
+					Iterator<String> serverIterator = serverSet.iterator();
 					String chosenServer = (String) serverIterator.next();
 					
-//					RPC to chosen server
-//					exchange views
-//					ServerView.mergeViews(local,exchangedView);
+					destView=new ConcurrentHashMap<String,String>(RPC.RPCClient.ExchangeViewClient(chosenServer, ServerView.serverView));
+					ConcurrentHashMap<String,String> mergedView=new ConcurrentHashMap<String,String>(ViewManager.mergeViews(ServerView.serverView,destView));
+					ViewManager.mergeViewWithSelf(mergedView);
 					
 				} else {
 //					SimpleDB shenanigans

@@ -1,9 +1,9 @@
 package lsi;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import Project1a.*;
 
 
 public class ViewManager {
@@ -89,26 +89,26 @@ public class ViewManager {
 			{
 				for(String svr:serverID)
 				{
-					String newvalue=System.currentTimeMillis()+DELIMITER_LEVEL2+state;
+					String newvalue=state+DELIMITER_LEVEL2+System.currentTimeMillis();
 					View.ServerView.serverView.put(svr,newvalue);
 				}
 			}
 		}
 	}
 	
-	public static Set<String> getActiveServersList(ConcurrentHashMap<String, String> map){
-		
-		Set<String> keySet = map.keySet();
-		Set<String> resultSet = new HashSet<String>();
-		resultSet=keySet;
-		for(String server:keySet){
+	public static ConcurrentHashMap<String, String>  getActiveServersList(ConcurrentHashMap<String, String> map){
+		//get all active servers except yourself
+		ConcurrentHashMap<String, String>  resultMap = new ConcurrentHashMap<String,String>(map);
+		for(String server:map.keySet()){
 			String tupleString = map.get(server);
 			String[] parseTuple = tupleString.split(DELIMITER_LEVEL2);
 			if (parseTuple[0].equals(downState)) {
-				resultSet.remove(server);
+				resultMap.remove(server);
 			}
 		}
-		return resultSet;
+		resultMap.remove(ServletForSession.serverID.toString());  //remove self
+
+		return resultMap;
 	}
 public static void mergeViewWithSelf(ConcurrentHashMap<String, String> newMerged) {
 		

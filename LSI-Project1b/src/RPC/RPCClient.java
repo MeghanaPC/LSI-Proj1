@@ -29,7 +29,7 @@ public class RPCClient {
 	// creating new DatagramSocket object rpcSocket
 	// and closing it when done
 	//
-	public SessionState SessionReadClient(List<String> destIP,
+	public static SessionState SessionReadClient(List<String> destIP,
 			SessionState sessionObj) throws Exception {
 		// format to send = callID, opcode,sessionID
 		boolean flag = true;
@@ -90,7 +90,7 @@ public class RPCClient {
 		return null;
 	}
 
-	private boolean checkCallIDVersion(int recVersion, int currVersion,
+	private static boolean checkCallIDVersion(int recVersion, int currVersion,
 			int recCallID, int currCallID) {
 		if (recVersion != currVersion)
 			return false;
@@ -100,7 +100,7 @@ public class RPCClient {
 		return true;
 	}
 
-	public List<String> SessionWriteClient(List<String> destIP,
+	public static List<String> SessionWriteClient(List<String> destIP,
 			SessionState sessionObj) throws Exception {
 		List<String> backups = new ArrayList<String>();
 		DatagramSocket rpcSocket = new DatagramSocket();
@@ -158,7 +158,7 @@ public class RPCClient {
 
 	}
 
-	public ConcurrentHashMap<String, String> ExchangeViewClient(String dest,
+	public static ConcurrentHashMap<String, String> ExchangeViewClient(String dest,
 			ConcurrentHashMap<String, String> view) throws Exception {
 		DatagramSocket rpcSocket = new DatagramSocket();
 		rpcSocket.setSoTimeout(timeOut);
