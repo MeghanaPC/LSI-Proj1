@@ -24,11 +24,18 @@ public class SimpleDbAccess {
 		ConcurrentHashMap<String, String> dbView = getViewFromDB();
 		if(dbView != null ){
 			//mergeViews() DB view with self view
-			
+			ConcurrentHashMap<String, String> mergedView = ViewManager.mergeViews(dbView, ServerView.serverView);
 			//Send DB the mergedView
+			putViewToDB(mergedView);
 			
+			ViewManager.mergeViewWithSelf(mergedView);
 			//mergeWithSelf(mergedView)
 		}
+		
+	}
+
+	private static void putViewToDB(ConcurrentHashMap<String, String> mergedView) {
+
 		
 	}
 
