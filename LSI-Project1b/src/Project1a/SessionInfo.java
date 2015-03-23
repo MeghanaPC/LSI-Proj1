@@ -5,7 +5,7 @@ import java.util.Date;
 public class SessionInfo {
 	private String message;
 	private int version;
-	private Date expirationTime;
+	private long expirationTime;
 	public String getMessage() {
 		return message;
 	}
@@ -18,10 +18,10 @@ public class SessionInfo {
 	public void setVersion(int version) {
 		this.version = version;
 	}
-	public Date getExpirationTime() {
+	public long getExpirationTime() {
 		return expirationTime;
 	}
-	public void setExpirationTime(Date expirationTime) {
+	public void setExpirationTime(long expirationTime) {
 		this.expirationTime = expirationTime;
 	}
 	
