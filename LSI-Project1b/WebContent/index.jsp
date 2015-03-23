@@ -1,3 +1,4 @@
+<%@page import="com.amazonaws.services.simpledb.AmazonSimpleDB"%>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ page import="com.amazonaws.*" %>
 <%@ page import="com.amazonaws.auth.*" %>
@@ -7,6 +8,7 @@
 <%@ page import="com.amazonaws.services.s3.model.*" %>
 <%@ page import="com.amazonaws.services.dynamodbv2.*" %>
 <%@ page import="com.amazonaws.services.dynamodbv2.model.*" %>
+<%@ page import="com.amazonaws.services.simpledb.AmazonSimpleDBClient" %>
 
 <%! // Share the client objects across threads to
     // avoid creating new clients for each web request

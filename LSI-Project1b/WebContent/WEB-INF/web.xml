@@ -10,7 +10,11 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
    <servlet>
-    <servlet-name>ServletUserDisplay</servlet-name>
-    <servlet-class>ServletUserDisplay</servlet-class>
+    <servlet-name>EnterServlet</servlet-name>
+    <servlet-class>Project1a.EnterServlet</servlet-class>
   </servlet>
+  <servlet-mapping>
+      <servlet-name>EnterServlet</servlet-name>
+  	<url-pattern>/EnterServlet</url-pattern>
+  </servlet-mapping>
 </web-app>
