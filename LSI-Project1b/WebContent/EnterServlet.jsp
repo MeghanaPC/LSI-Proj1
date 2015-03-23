@@ -31,6 +31,19 @@ out.println("<br/>");
 out.println(expirationTime);
 %>	
 
+<%
+String serverID=(String)request.getAttribute("serverID");
+String placeFound=(String)request.getAttribute("placeFound");
+String primary=(String)request.getAttribute("primary");
+String backup=(String)request.getAttribute("backup");
+String sessionExpiryTime=(String)request.getAttribute("sessionExpiryTime");
+String discardTime=(String)request.getAttribute("discardTime");
+String viewString=(String)request.getAttribute("viewString");
+
+//need to complete 
+
+
+%>
 </form>
 </body>
 </html>

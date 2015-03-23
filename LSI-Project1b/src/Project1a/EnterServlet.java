@@ -33,6 +33,9 @@ public class EnterServlet extends HttpServlet {
 	private static final String defaultMessage = "Hello User!";
 	
 	private static final String location = "localhost";
+	private static final String DELIMITER_LEVEL2 = "#";
+	private static final String upState="UP";
+	private static final String downState="DOWN";
 	public static InetAddress serverID;
 
        
@@ -42,8 +45,10 @@ public class EnterServlet extends HttpServlet {
     public EnterServlet() {
         super();
         // TODO Auto-generated constructor stub
+        
         try {
 			serverID=InetAddress.getByName("127.0.0.1");
+			ServerView.serverView.put(serverID.toString(), upState+DELIMITER_LEVEL2+System.currentTimeMillis());
 			
 			Thread rpcServerThread = new Thread(new RPCServer());
 			rpcServerThread.setDaemon(true);
