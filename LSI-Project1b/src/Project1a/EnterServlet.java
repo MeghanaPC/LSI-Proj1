@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.media.j3d.View;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 //import javax.servlet.annotation.WebServlet;
@@ -18,6 +19,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import View.*;
+import Project1a.*;
+import RPC.*;
 /**
  * Servlet implementation class EnterServlet
  */
@@ -41,7 +45,20 @@ public class EnterServlet extends HttpServlet {
         // TODO Auto-generated constructor stub
         try {
 			serverID=InetAddress.getByName("127.0.0.1");
-		} catch (UnknownHostException e) {
+			
+			Thread rpcServerThread = new Thread(new RPCServer());
+			rpcServerThread.setDaemon(true);
+			rpcServerThread.start();
+			
+			Thread viewDaemonThread = new Thread(new viewDaemon());
+			viewDaemonThread.setDaemon(true);
+			viewDaemonThread.start();
+			
+			Thread garbageDaemonThread = new Thread(new garbageDaemon());
+			garbageDaemonThread.setDaemon(true);
+			garbageDaemonThread.start();
+			
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
