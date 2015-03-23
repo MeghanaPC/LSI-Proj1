@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import View.*;
+import Project1a.*;
+import RPC.*;
 /**
  * Servlet implementation class EnterServlet
  */
@@ -30,6 +33,9 @@ public class EnterServlet extends HttpServlet {
 	private static final String defaultMessage = "Hello User!";
 	
 	private static final String location = "localhost";
+	private static final String DELIMITER_LEVEL2 = "#";
+	private static final String upState="UP";
+	private static final String downState="DOWN";
 	public static InetAddress serverID;
 
        
@@ -39,9 +45,24 @@ public class EnterServlet extends HttpServlet {
     public EnterServlet() {
         super();
         // TODO Auto-generated constructor stub
+        
         try {
 			serverID=InetAddress.getByName("127.0.0.1");
-		} catch (UnknownHostException e) {
+			ServerView.serverView.put(serverID.toString(), upState+DELIMITER_LEVEL2+System.currentTimeMillis());
+			
+			Thread rpcServerThread = new Thread(new RPCServer());
+			rpcServerThread.setDaemon(true);
+			rpcServerThread.start();
+			
+			Thread viewDaemonThread = new Thread(new viewDaemon());
+			viewDaemonThread.setDaemon(true);
+			viewDaemonThread.start();
+			
+			Thread garbageDaemonThread = new Thread(new garbageDaemon());
+			garbageDaemonThread.setDaemon(true);
+			garbageDaemonThread.start();
+			
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

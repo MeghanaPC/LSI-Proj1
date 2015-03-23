@@ -1,5 +1,8 @@
 package lsi;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -37,8 +40,33 @@ public class GeneralUtils {
 		return resultIP;
 	}
 	
+	public static String fetchAWSIP(){
+	
+		StringBuilder resultBuilder = new StringBuilder();
+		String commandString ="/opt/aws/bin/ec2-metadata --public-ipv4";
+		try {
+			Process ipProcess = Runtime.getRuntime().exec(commandString);
+			ipProcess.waitFor();
+	 
+			BufferedReader reader = new BufferedReader(new InputStreamReader(ipProcess.getInputStream()));
+	 
+			String outputString = "";			
+	    
+			while ((outputString = reader.readLine())!= null) {
+				resultBuilder.append(outputString + "\n");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String parseResult = resultBuilder.toString();
+		String[] resultArray = parseResult.split(" ");
+		parseResult = resultArray[1];
+		return parseResult;
+	}
+	
 	public static void main(String[] args) {
-		System.out.println(fetchIP());
+		System.out.println(fetchAWSIP());
 	}
 	
 }

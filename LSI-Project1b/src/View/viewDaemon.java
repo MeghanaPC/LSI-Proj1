@@ -45,6 +45,7 @@ public class viewDaemon  implements Runnable{
 					
 				} else {
 //					//call simpleDB
+					SimpleDbAccess.gossipWithSimpleDb();
 					
 				}
 				Thread.sleep((GOSSIP_SECS/2) + new Random().nextInt(GOSSIP_SECS));
