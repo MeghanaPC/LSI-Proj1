@@ -16,7 +16,7 @@ import Project1a.*;
 public class RPCClient {
 	private static final int maxPacketSize = 512;
 	private static final int portProj1bRPC = 5300;
-	//private static int callID = 0;
+	private static int callID = 0;
 	private static final int timeOut = 10000;
 	private static String DELIMITER = "=";
 	private static int OPCODE_READ = 1;
@@ -35,7 +35,11 @@ public class RPCClient {
 	// sending to multiple destAddrs, all at port = portProj1bRPC
 	// creating new DatagramSocket object rpcSocket
 	// and closing it when done
-	
+	public static int getCallID()
+	{
+		callID=callID+1;
+		return callID;
+	}
 	
 	//sessionObj should contain stuff from Cookie
 	public static SessionInfo SessionReadClient(List<String> destIP,
@@ -44,9 +48,10 @@ public class RPCClient {
 		boolean flag = true;
 		DatagramSocket rpcSocket = new DatagramSocket();
 		rpcSocket.setSoTimeout(timeOut);
-		UUID callID = UUID.randomUUID();
+		int callIDLocal=getCallID();
+		//UUID callID = UUID.randomUUID();
 		
-		String dataToSend = callID + DELIMITER + OPCODE_READ + DELIMITER+ SessionID;
+		String dataToSend = callIDLocal + DELIMITER + OPCODE_READ + DELIMITER+ SessionID;
 		byte[] outBuf = new byte[maxPacketSize];
 		outBuf = dataToSend.getBytes();
 		
@@ -75,10 +80,10 @@ public class RPCClient {
 				String receivedString = new String(inBuf);
 				
 				if (receivedString != null) {
-					// received format=callID,sessionID,version,message,timestamp
+					// received format=callID,version,message,timestamp
 					String[] output = receivedString.split(DELIMITER);
 					
-					if (checkCallIDVersion(Integer.parseInt(output[1].trim()),sessionObj.getVersion(),output[0].trim(), callID.toString())) {
+					if (checkCallIDVersion(Integer.parseInt(output[1].trim()),sessionObj.getVersion(),Integer.parseInt(output[0].trim()), callIDLocal)) {
 						flag = false;
 
 						// only when same version number and callID is matched
@@ -105,10 +110,10 @@ public class RPCClient {
 	}
 
 	private static boolean checkCallIDVersion(int recVersion, int currVersion,
-			String recCallID, String currCallID) {
+			int recCallID, int currCallID) {
 		if (recVersion != currVersion)
 			return false;
-		if (recCallID.equals(currCallID))
+		if (recCallID!=currCallID)
 			return false;
 
 		return true;
@@ -119,8 +124,9 @@ public class RPCClient {
 		DatagramSocket rpcSocket = new DatagramSocket();
 		try {
 			rpcSocket.setSoTimeout(timeOut);
-			UUID callID = UUID.randomUUID();
-			String dataToSend = callID + DELIMITER + OPCODE_WRITE + DELIMITER
+			//UUID callID = UUID.randomUUID();
+			int callIDLocal=getCallID();
+			String dataToSend = callIDLocal + DELIMITER + OPCODE_WRITE + DELIMITER
 					+ sessionID + DELIMITER
 					+ sessionObj.getMessage()+ DELIMITER
 					+ sessionObj.getVersion() + DELIMITER
@@ -146,7 +152,7 @@ public class RPCClient {
 				if (receivedString != null) {
 					// format = CallID , ack
 					String[] output = receivedString.split(DELIMITER);
-					if(output[0].trim().equals(callID))
+					if(Integer.parseInt(output[0].trim())==callIDLocal)
 					{
 						if (output[1].trim().equals(ack)) {
 							k_ack = k_ack + 1;
@@ -189,11 +195,12 @@ public class RPCClient {
 		DatagramSocket rpcSocket = new DatagramSocket();
 		rpcSocket.setSoTimeout(timeOut);
 		try {
-			UUID callID = UUID.randomUUID();
+			//UUID callID = UUID.randomUUID();
+			int callIDLocal=getCallID();
 			InetAddress IP = InetAddress.getByName(dest);
 			String viewString = null;
 			viewString=lsi.ViewManager.hashMapToString(view);
-			String dataToSend = callID + DELIMITER + OPCODE_VIEW + DELIMITER
+			String dataToSend = callIDLocal + DELIMITER + OPCODE_VIEW + DELIMITER
 					+ viewString;
 
 			byte[] outBuf = new byte[maxPacketSize];
@@ -220,7 +227,7 @@ public class RPCClient {
 				
 				
 				receivedString = new String(inBuf).split(DELIMITER);
-				if (receivedString[0].trim().equals(callID)) {
+				if (Integer.parseInt(receivedString[0].trim())==callIDLocal) {
 					String ResultviewString = receivedString[1].trim();
 					ConcurrentHashMap<String, String> resultview = new ConcurrentHashMap<String, String>();
 					
@@ -229,7 +236,7 @@ public class RPCClient {
 					return resultview;
 				}
 
-			} while (!receivedString[0].trim().equals(callID));
+			} while (Integer.parseInt(receivedString[0].trim())!=callIDLocal);
 			return null;
 		} catch (SocketTimeoutException stoe) {
 			// timeout
