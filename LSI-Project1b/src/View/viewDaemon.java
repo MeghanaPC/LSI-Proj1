@@ -11,7 +11,7 @@ import Project1a.ServletForSession;
 
 public class viewDaemon  implements Runnable{
 	
-	private static final String DELIMITER_LEVEL1= "-";
+	private static final String DELIMITER_LEVEL1= "@";
 	private static final String DELIMITER_LEVEL2 = "#";
 	private static final String upState="UP";
 	private static final String downState="DOWN";

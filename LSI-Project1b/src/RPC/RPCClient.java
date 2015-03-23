@@ -22,9 +22,13 @@ public class RPCClient {
 	private static int OPCODE_WRITE = 2;
 	private static int OPCODE_VIEW = 3;
 	private static String ack = "SUCCESS";
-	private static final String DELIMITER_LEVEL1= "-";
+	private static final String DELIMITER_LEVEL1= "@";
 	private static final String DELIMITER_LEVEL2 = "#";
+	//private static final String DELIMITER_SessionID = "_";
+	private static final String upState="UP";
+	private static final String downState="DOWN";
 	
+
 	//
 	// SessionReadClient(sessionID)
 	// sending to multiple destAddrs, all at port = portProj1bRPC
@@ -56,11 +60,21 @@ public class RPCClient {
 			do {
 				recvPkt.setLength(inBuf.length);
 				rpcSocket.receive(recvPkt);
+				
+				//updating entry of the responded to UP, even if it's version or callID doesn't match
+				InetAddress returnAddr = recvPkt.getAddress();
+				String[] temp = returnAddr.toString().trim().split("/"); 
+				List<String> serverIDlist=new ArrayList<String>();
+				serverIDlist.add(temp[1].trim());
+				lsi.ViewManager.UpdateView(serverIDlist,upState);
+				
+				
 				String receivedString = new String(inBuf);
+				
 				if (receivedString != null) {
 					// received format=callID,sessionID,version,message,timestamp
-					
 					String[] output = receivedString.split(DELIMITER);
+					
 					if (checkCallIDVersion(Integer.parseInt(output[2].trim()),sessionObj.getSessionVersion(),Integer.parseInt(output[0].trim()), callID)) {
 						flag = false;
 
@@ -138,12 +152,23 @@ public class RPCClient {
 					if (output[1].trim().equals(ack)) {
 						k_ack = k_ack + 1;
 						InetAddress returnAddr = recvPkt.getAddress();
-						String[] temp = returnAddr.toString().split("/");   //needs to be checked
+						String[] temp = returnAddr.toString().trim().split("/");   //needs to be checked
 						backups.add(temp[1].trim());
 					}
 				}
 			} while (k_ack != destIP.size());
-
+			//set servers to up / down
+			List<String> downservers=new ArrayList<String>();
+			for(String svr:destIP)
+			{
+				if(!backups.contains(svr))
+				{
+					downservers.add(svr);
+				}
+			}
+			lsi.ViewManager.UpdateView(backups, upState);
+			lsi.ViewManager.UpdateView(downservers, downState);
+			
 		} catch (SocketTimeoutException stoe) {
 			// timeout
 			stoe.printStackTrace();
@@ -167,11 +192,6 @@ public class RPCClient {
 			callID = callID + 1;
 			InetAddress IP = InetAddress.getByName(dest);
 			String viewString = null;
-			/*for (Entry<String, String> e : view.entrySet()) {
-				viewString += e.getKey() + DELIMITER_LEVEL2 + e.getValue() + DELIMITER_LEVEL1;
-			}
-			
-			viewString = viewString.substring(0, viewString.length() - 1); */
 			viewString=lsi.ViewManager.hashMapToString(view);
 			String dataToSend = callID + DELIMITER + OPCODE_VIEW + DELIMITER
 					+ viewString;
@@ -190,6 +210,15 @@ public class RPCClient {
 			do {
 				recvPkt.setLength(inBuf.length);
 				rpcSocket.receive(recvPkt);
+				
+				//updating responded to upstate
+				InetAddress returnAddr = recvPkt.getAddress();
+				String[] temp = returnAddr.toString().trim().split("/"); 
+				List<String> serverIDlist=new ArrayList<String>();
+				serverIDlist.add(temp[1].trim());
+				lsi.ViewManager.UpdateView(serverIDlist,upState);
+				
+				
 				receivedString = new String(inBuf).split(DELIMITER);
 				if (Integer.parseInt(receivedString[0].trim()) == callID) {
 					String ResultviewString = receivedString[1].trim();
