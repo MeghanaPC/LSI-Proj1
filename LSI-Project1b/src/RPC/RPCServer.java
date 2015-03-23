@@ -94,8 +94,8 @@ public class RPCServer implements Runnable {
 			ConcurrentHashMap<String, String> Myview = new ConcurrentHashMap<String, String>();
 			Myview = View.ServerView.serverView;
 			ConcurrentHashMap<String, String> receivedview = new ConcurrentHashMap<String, String>();
-			receivedview = lsi.ViewManager.stringToHashMap(receivedData[2]
-					.trim());
+			receivedview = lsi.ViewManager.stringToHashMap(receivedData[2].trim());
+			
 			ConcurrentHashMap<String, String> mergedView = new ConcurrentHashMap<String, String>();
 			mergedView = lsi.ViewManager.mergeViews(Myview, receivedview);
 			String sendView = lsi.ViewManager.hashMapToString(Myview);

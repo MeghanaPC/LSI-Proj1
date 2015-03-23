@@ -3,7 +3,9 @@ package lsi;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 import Project1a.*;
+import View.ServerView;
 
 
 public class ViewManager {
@@ -83,6 +85,9 @@ public class ViewManager {
 	}
 	public static void UpdateView(List<String> serverID,String state)
 	{
+		//update self
+		ServerView.serverView.put(ServletForSession.serverID.toString(),upState+DELIMITER_LEVEL2+System.currentTimeMillis());
+		
 		if(state.equals(upState)||state.equals(downState))  //just checking currect state is passed
 		{
 			synchronized(View.ServerView.serverView)
