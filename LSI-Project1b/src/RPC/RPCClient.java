@@ -22,6 +22,8 @@ public class RPCClient {
 	private static int OPCODE_WRITE = 2;
 	private static int OPCODE_VIEW = 3;
 	private static String ack = "SUCCESS";
+	private static final String DELIMITER_LEVEL1= "-";
+	private static final String DELIMITER_LEVEL2 = "#";
 	
 	//
 	// SessionReadClient(sessionID)
@@ -165,10 +167,12 @@ public class RPCClient {
 			callID = callID + 1;
 			InetAddress IP = InetAddress.getByName(dest);
 			String viewString = null;
-			for (Entry<String, String> e : view.entrySet()) {
-				viewString += e.getKey() + "_" + e.getValue() + "-";
+			/*for (Entry<String, String> e : view.entrySet()) {
+				viewString += e.getKey() + DELIMITER_LEVEL2 + e.getValue() + DELIMITER_LEVEL1;
 			}
-			viewString = viewString.substring(0, viewString.length() - 1);
+			
+			viewString = viewString.substring(0, viewString.length() - 1); */
+			viewString=lsi.ViewManager.hashMapToString(view);
 			String dataToSend = callID + DELIMITER + OPCODE_VIEW + DELIMITER
 					+ viewString;
 
@@ -190,11 +194,11 @@ public class RPCClient {
 				if (Integer.parseInt(receivedString[0].trim()) == callID) {
 					String ResultviewString = receivedString[1].trim();
 					ConcurrentHashMap<String, String> resultview = new ConcurrentHashMap<String, String>();
-					String[] tuples = ResultviewString.split("-");
+					String[] tuples = ResultviewString.split(DELIMITER_LEVEL1);
 					for (String s : tuples) {
-						String[] keyValue = s.split("_");
+						String[] keyValue = s.split(DELIMITER_LEVEL2);
 						resultview.put(keyValue[0].trim(), keyValue[1].trim()
-								+ "_" + keyValue[2].trim());
+								+ DELIMITER_LEVEL2 + keyValue[2].trim());
 					}
 					return resultview;
 				}

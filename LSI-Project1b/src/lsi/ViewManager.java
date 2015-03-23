@@ -9,7 +9,7 @@ import Project1a.*;
 public class ViewManager {
 	
 	private static final String DELIMITER_LEVEL1= "-";
-	private static final String DELIMITER_LEVEL2 = "";
+	private static final String DELIMITER_LEVEL2 = "#";
 	private static final String upState="UP";
 	private static final String downState="DOWN";
 
