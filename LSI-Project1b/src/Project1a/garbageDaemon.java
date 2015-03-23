@@ -26,7 +26,7 @@ public class garbageDaemon implements Runnable {
 				}
 				expiredList.clear();
 				Thread.sleep(10000);
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
