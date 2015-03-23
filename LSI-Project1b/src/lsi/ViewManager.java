@@ -1,6 +1,7 @@
 package lsi;
 
 import java.util.List;
+
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -86,7 +87,7 @@ public class ViewManager {
 	public static void UpdateView(List<String> serverID,String state)
 	{
 		//update self
-		ServerView.serverView.put(ServletForSession.serverID.toString(),upState+DELIMITER_LEVEL2+System.currentTimeMillis());
+		ServerView.serverView.put(EnterServlet.serverID.toString(),upState+DELIMITER_LEVEL2+System.currentTimeMillis());
 		
 		if(state.equals(upState)||state.equals(downState))  //just checking currect state is passed
 		{
@@ -111,7 +112,7 @@ public class ViewManager {
 				resultMap.remove(server);
 			}
 		}
-		resultMap.remove(ServletForSession.serverID.toString());  //remove self
+		resultMap.remove(EnterServlet.serverID.toString());  //remove self
 
 		return resultMap;
 	}

@@ -6,8 +6,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.concurrent.ConcurrentHashMap;
 
-import Project1a.SessionState;
-import Project1a.ServletForSession;
+import Project1a.*;
 
 public class RPCServer implements Runnable {
 
@@ -62,31 +61,28 @@ public class RPCServer implements Runnable {
 		int operationCode = Integer.parseInt(receivedData[1].trim());
 		if (operationCode == OPCODE_READ) {
 			// received format=callID,opcode,sessionID
-			SessionState sessionObj = ServletForSession.sessiontable
-					.get(receivedData[2].trim());
+			SessionInfo sessionObj = SessionTable.sessionMap.get(receivedData[2].trim());
 			String sessionString = "";
 			if (sessionObj != null) {
-				// sending format=callID,sessionID,version,message,timestamp
-				sessionString = sessionObj.getSessionID() + DELIMITER
-						+ sessionObj.getSessionVersion() + DELIMITER
-						+ sessionObj.getSessionMessage() + DELIMITER
-						+ sessionObj.getExpirationTimeStamp();
+				// sending format=callID,version,message,timestamp
+				sessionString = sessionObj.getVersion() + DELIMITER
+						+ sessionObj.getMessage()+ DELIMITER
+						+ sessionObj.getExpirationTime();
 			} else {
-				sessionString = -1 + DELIMITER + -1 + DELIMITER + -1
+				sessionString = -1 + DELIMITER + -1
 						+ DELIMITER + -1;
 			}
 			result += sessionString;
 
 		} else if (operationCode == OPCODE_WRITE) {
 			// received format=callID,opcode,sessionID,message,version,timestamp
-			SessionState object = new SessionState();
-			object.setSessionID(receivedData[2].trim());
-			object.setSessionMessage(receivedData[3].trim());
-			object.setSessionVersion(Integer.parseInt(receivedData[4].trim()));
-			object.setExpirationTimeStamp(Long.parseLong(receivedData[5].trim()));
+			SessionInfo object = new SessionInfo();
+			object.setMessage(receivedData[3].trim());
+			object.setVersion(Integer.parseInt(receivedData[4].trim()));
+			object.setExpirationTime(Long.parseLong(receivedData[5].trim()));
 
 			// sending format = callID, ack
-			ServletForSession.sessiontable.put(object.getSessionID(), object);
+			SessionTable.sessionMap.put(receivedData[2].trim(), object);
 			result += ack;
 
 		} else if (operationCode == OPCODE_VIEW) {

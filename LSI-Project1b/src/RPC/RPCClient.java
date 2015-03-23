@@ -1,16 +1,16 @@
 package RPC;
 
 import java.io.IOException;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import Project1a.SessionState;
+import Project1a.*;
 
 public class RPCClient {
 	private static final int maxPacketSize = 512;
@@ -35,15 +35,14 @@ public class RPCClient {
 	// creating new DatagramSocket object rpcSocket
 	// and closing it when done
 	//
-	public static SessionState SessionReadClient(List<String> destIP,
-			SessionState sessionObj) throws Exception {
+	public static SessionInfo SessionReadClient(List<String> destIP,
+			String SessionID,SessionInfo sessionObj) throws Exception {
 		// format to send = callID, opcode,sessionID
 		boolean flag = true;
 		DatagramSocket rpcSocket = new DatagramSocket();
 		rpcSocket.setSoTimeout(timeOut);
 		callID = callID + 1;
-		String dataToSend = callID + DELIMITER + OPCODE_READ + DELIMITER
-				+ sessionObj.getSessionID();
+		String dataToSend = callID + DELIMITER + OPCODE_READ + DELIMITER+ SessionID;
 		byte[] outBuf = new byte[maxPacketSize];
 		outBuf = dataToSend.getBytes();
 		
@@ -75,19 +74,15 @@ public class RPCClient {
 					// received format=callID,sessionID,version,message,timestamp
 					String[] output = receivedString.split(DELIMITER);
 					
-					if (checkCallIDVersion(Integer.parseInt(output[2].trim()),sessionObj.getSessionVersion(),Integer.parseInt(output[0].trim()), callID)) {
+					if (checkCallIDVersion(Integer.parseInt(output[2].trim()),sessionObj.getVersion(),Integer.parseInt(output[0].trim()), callID)) {
 						flag = false;
 
 						// only when same version number and callID is matched
-						SessionState returnObj = new SessionState();
-						returnObj.setExpirationTimeStamp(Long
-								.parseLong(output[4].trim()));
-						returnObj.setSessionID(output[1].trim());
-						returnObj.setSessionMessage(output[3].trim());
-						returnObj.setSessionVersion(Integer.parseInt(output[2]
-								.trim()));
-
-						
+						SessionInfo returnObj = new SessionInfo();
+						returnObj.setVersion(Integer.parseInt(output[1].trim()));
+						returnObj.setMessage(output[2].trim());
+						returnObj.setExpirationTime(Long.parseLong(output[3].trim()));
+							
 						return returnObj;
 					}
 				}
@@ -115,18 +110,17 @@ public class RPCClient {
 		return true;
 	}
 
-	public static List<String> SessionWriteClient(List<String> destIP,
-			SessionState sessionObj) throws Exception {
+	public static List<String> SessionWriteClient(List<String> destIP,String sessionID,SessionInfo sessionObj) throws Exception {
 		List<String> backups = new ArrayList<String>();
 		DatagramSocket rpcSocket = new DatagramSocket();
 		try {
 			rpcSocket.setSoTimeout(timeOut);
 			callID = callID + 1;
 			String dataToSend = callID + DELIMITER + OPCODE_WRITE + DELIMITER
-					+ sessionObj.getSessionID() + DELIMITER
-					+ sessionObj.getSessionMessage() + DELIMITER
-					+ sessionObj.getSessionVersion() + DELIMITER
-					+ sessionObj.getExpirationTimeStamp();
+					+ sessionID + DELIMITER
+					+ sessionObj.getMessage()+ DELIMITER
+					+ sessionObj.getVersion() + DELIMITER
+					+ sessionObj.getExpirationTime();
 
 			byte[] outBuf = new byte[maxPacketSize];
 			outBuf = dataToSend.getBytes();

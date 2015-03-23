@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lsi.ViewManager;
-import Project1a.ServletForSession;
+import Project1a.*;
 
 public class viewDaemon  implements Runnable{
 	
@@ -32,7 +32,7 @@ public class viewDaemon  implements Runnable{
 				
 				if (numProbability < randomProbability) {
 					//updating self
-					ServerView.serverView.put(ServletForSession.serverID.toString(),upState+DELIMITER_LEVEL2+System.currentTimeMillis());
+					ServerView.serverView.put(EnterServlet.serverID.toString(),upState+DELIMITER_LEVEL2+System.currentTimeMillis());
 					
 					Set<String> serverSet=activeServerViewMap.keySet();
 					java.util.Collections.shuffle((List<?>) serverSet);

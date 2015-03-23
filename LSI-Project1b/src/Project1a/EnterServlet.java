@@ -2,6 +2,8 @@ package Project1a;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,6 +30,7 @@ public class EnterServlet extends HttpServlet {
 	private static final String defaultMessage = "Hello User!";
 	
 	private static final String location = "localhost";
+	public static InetAddress serverID;
 
        
     /**
@@ -36,6 +39,12 @@ public class EnterServlet extends HttpServlet {
     public EnterServlet() {
         super();
         // TODO Auto-generated constructor stub
+        try {
+			serverID=InetAddress.getByName("127.0.0.1");
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 	/**
