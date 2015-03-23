@@ -40,9 +40,7 @@ public class RPCClient {
 				+ sessionObj.getSessionID();
 		byte[] outBuf = new byte[maxPacketSize];
 		outBuf = dataToSend.getBytes();
-		// DatagramPacket sendPkt = new DatagramPacket(outBuf, outBuf.length,
-		// IP, portProj1bRPC);
-		// fill outBuf with [ callID, operationSESSIONREAD, sessionID ]
+		
 
 		for (String host : destIP) {
 			InetAddress IP = InetAddress.getByName(host);
@@ -58,8 +56,8 @@ public class RPCClient {
 				rpcSocket.receive(recvPkt);
 				String receivedString = new String(inBuf);
 				if (receivedString != null) {
-					// received
-					// format=callID,sessionID,version,message,timestamp
+					// received format=callID,sessionID,version,message,timestamp
+					
 					String[] output = receivedString.split(DELIMITER);
 					if (checkCallIDVersion(Integer.parseInt(output[2].trim()),sessionObj.getSessionVersion(),Integer.parseInt(output[0].trim()), callID)) {
 						flag = false;
@@ -73,6 +71,7 @@ public class RPCClient {
 						returnObj.setSessionVersion(Integer.parseInt(output[2]
 								.trim()));
 
+						
 						return returnObj;
 					}
 				}

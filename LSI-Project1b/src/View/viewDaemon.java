@@ -15,7 +15,7 @@ public class viewDaemon  implements Runnable{
 	private static final String DELIMITER_LEVEL2 = "_";
 	private static final String upState="UP";
 	private static final String downState="DOWN";
-//	Need to fix this to a value
+	//	Need to fix this to a value
 	private final int GOSSIP_SECS = 10;
 	
 	@Override
