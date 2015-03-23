@@ -87,8 +87,7 @@ public class RPCServer implements Runnable {
 
 		} else if (operationCode == OPCODE_VIEW) {
 			// received format = callID,opcode, stringOfTuples
-			ConcurrentHashMap<String, String> Myview = new ConcurrentHashMap<String, String>();
-			Myview = View.ServerView.serverView;
+			ConcurrentHashMap<String, String> Myview = new ConcurrentHashMap<String, String>(View.ServerView.serverView);
 			ConcurrentHashMap<String, String> receivedview = new ConcurrentHashMap<String, String>();
 			receivedview = lsi.ViewManager.stringToHashMap(receivedData[2].trim());
 			
