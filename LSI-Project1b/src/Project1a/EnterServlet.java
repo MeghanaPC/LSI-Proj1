@@ -66,7 +66,7 @@ public class EnterServlet extends HttpServlet {
 			Date expirationTime = new Date(System.currentTimeMillis() + 60000);
 			UUID sessionId = UUID.randomUUID();
 			SessionInfo sessionInfo = new SessionInfo();
-			sessionInfo.setExpirationTime(expirationTime);
+			sessionInfo.setExpirationTime(expirationTime.getTime());
 			sessionInfo.setVersion(1);
 			sessionInfo.setMessage(defaultMessage);
 			SessionTable.sessionMap.put(sessionId.toString(),sessionInfo);
@@ -118,7 +118,7 @@ public class EnterServlet extends HttpServlet {
 			Date expirationTime = new Date(System.currentTimeMillis() + 60000);
 			UUID sessionId = UUID.randomUUID();
 			SessionInfo sessionInfo = new SessionInfo();
-			sessionInfo.setExpirationTime(expirationTime);
+			sessionInfo.setExpirationTime(expirationTime.getTime());
 			sessionInfo.setVersion(1);
 			sessionInfo.setMessage(defaultMessage);
 			SessionTable.sessionMap.put(sessionId.toString(),sessionInfo);
@@ -160,7 +160,7 @@ public class EnterServlet extends HttpServlet {
 			Date expirationTime = new Date(System.currentTimeMillis() + 60000);
 
 			SessionInfo sessionInfo = new SessionInfo();
-			sessionInfo.setExpirationTime(expirationTime);
+			sessionInfo.setExpirationTime(expirationTime.getTime());
 			sessionInfo.setVersion(newVersionNumber);
 			sessionInfo.setMessage(oldSessionInfo.getMessage());
 			SessionTable.sessionMap.put(sessionId.toString(), sessionInfo);
@@ -201,7 +201,7 @@ public class EnterServlet extends HttpServlet {
 			Date expirationTime = new Date(System.currentTimeMillis() + 60000);
 
 			SessionInfo sessionInfo = new SessionInfo();
-			sessionInfo.setExpirationTime(expirationTime);
+			sessionInfo.setExpirationTime(expirationTime.getTime());
 			sessionInfo.setVersion(newVersionNumber);
 			sessionInfo.setMessage(text);
 			SessionTable.sessionMap.put(sessionId.toString(), sessionInfo);
@@ -228,7 +228,7 @@ public class EnterServlet extends HttpServlet {
 		Date currentTime = new Date();
 		ArrayList<String> keysToBeRemoved = new ArrayList<String>();
 		for(Map.Entry<String,SessionInfo> entry : SessionTable.sessionMap.entrySet()){
-			if(entry.getValue().getExpirationTime().before(currentTime)){
+			if(entry.getValue().getExpirationTime() < System.currentTimeMillis()){
 				keysToBeRemoved.add(entry.getKey());
 			}
 		}
