@@ -23,12 +23,14 @@ out.println("<h1> "+ message + " </h1>"); %>
 <br/>
 <br/>
 <%
+/*
 String cookie = (String) request.getAttribute("cookie");
 String expirationTime = (String) request.getAttribute("expiration");
 
 out.println(cookie); 
 out.println("<br/>");
 out.println(expirationTime);
+*/
 %>	
 
 <%

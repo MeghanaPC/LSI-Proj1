@@ -1,10 +1,10 @@
 package RPC;
 
 import java.io.IOException;
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +42,10 @@ public class RPCClient {
 	}
 	
 	//sessionObj should contain stuff from Cookie
-	public static SessionInfo SessionReadClient(List<String> destIP,
-			String SessionID,SessionInfo sessionObj) throws Exception {
+	public static RPCReadReturnObj SessionReadClient(List<String> destIP,
+			String SessionID,int versionNumber) throws Exception{
 		// format to send = callID, opcode,sessionID
+		RPCReadReturnObj returnObj = new RPCReadReturnObj();
 		boolean flag = true;
 		DatagramSocket rpcSocket = new DatagramSocket();
 		rpcSocket.setSoTimeout(timeOut);
@@ -85,15 +86,16 @@ public class RPCClient {
 					// received format=callID,version,message,timestamp
 					String[] output = receivedString.split(DELIMITER);
 					
-					if (checkCallIDVersion(Integer.parseInt(output[1].trim()),sessionObj.getVersion(),Integer.parseInt(output[0].trim()), callIDLocal)) {
+					if (checkCallIDVersion(Integer.parseInt(output[1].trim()),versionNumber,Integer.parseInt(output[0].trim()), callIDLocal)) {
 						flag = false;
 
 						// only when same version number and callID is matched
-						SessionInfo returnObj = new SessionInfo();
-						returnObj.setVersion(Integer.parseInt(output[1].trim()));
+						
+						//SessionInfo returnObj = new SessionInfo();
+						returnObj.setFoundVersion(Integer.parseInt(output[1].trim()));
 						returnObj.setMessage(output[2].trim());
-						returnObj.setExpirationTime(Long.parseLong(output[3].trim()));
-							
+						returnObj.setFoundExpiration(Long.parseLong(output[3].trim()));
+						returnObj.setServerID(temp[1].trim());
 						return returnObj;
 					}
 				}
@@ -107,7 +109,10 @@ public class RPCClient {
 		} catch (IOException ioe) {
 			// other error
 			return null;
-		} finally {
+		} catch(Exception e){
+			return null;
+		}
+		finally {
 			rpcSocket.close();
 		}
 		return null;
@@ -123,10 +128,19 @@ public class RPCClient {
 		return true;
 	}
 
-	public static List<String> SessionWriteClient(List<String> destIP,String sessionID,SessionInfo sessionObj) throws Exception {
+	public static List<String> SessionWriteClient(List<String> destIP,String sessionID,SessionInfo sessionObj) {
 		List<String> backups = new ArrayList<String>();
-		DatagramSocket rpcSocket = new DatagramSocket();
+
+		
+		DatagramSocket rpcSocket;
 		try {
+			rpcSocket = new DatagramSocket();
+		} catch (SocketException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return backups;
+		}
+		try {	
 			rpcSocket.setSoTimeout(timeOut);
 			//UUID callID = UUID.randomUUID();
 			int callIDLocal=getCallID();
@@ -187,7 +201,10 @@ public class RPCClient {
 			// other error
 			ioe.printStackTrace();
 			return backups;
-		} finally {
+		} catch(Exception e){
+			e.printStackTrace();
+			return backups;
+		}finally {
 			rpcSocket.close();
 		}
 		return backups;
