@@ -44,6 +44,9 @@ public class RPCServer implements Runnable {
 
 				byte[] outBuf = new byte[512];
 				String receivedString=new String(inBuf);
+				
+				System.out.println("RPC Server message from: " + returnAddr + " contents: " + receivedString);
+				
 				if(receivedString!=null)
 				{
 					String result = generateReply(receivedString);

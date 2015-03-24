@@ -56,7 +56,8 @@ public class RPCClient {
 		byte[] outBuf = new byte[maxPacketSize];
 		outBuf = dataToSend.getBytes();
 		
-
+		System.out.println("PRC ReadClient message:" + dataToSend);
+		
 		for (String host : destIP) {
 			InetAddress IP = InetAddress.getByName(host);
 			DatagramPacket sendPkt = new DatagramPacket(outBuf, outBuf.length,
@@ -72,6 +73,8 @@ public class RPCClient {
 				
 				
 				String receivedString = new String(inBuf);
+				
+				System.out.println("RPC ReadClient received message: " + receivedString);
 				
 				if (receivedString != null) {
 					
@@ -152,6 +155,8 @@ public class RPCClient {
 
 			byte[] outBuf = new byte[maxPacketSize];
 			outBuf = dataToSend.getBytes();
+			
+			System.out.println("PRC WriteClient sending message: " + dataToSend);
 
 			for (String host : destIP) {
 				InetAddress IP = InetAddress.getByName(host);
@@ -167,6 +172,9 @@ public class RPCClient {
 				recvPkt.setLength(inBuf.length);
 				rpcSocket.receive(recvPkt);
 				String receivedString = new String(inBuf);
+				
+				System.out.println("RPC WriteClient received message: " + receivedString);
+				
 				if (receivedString != null) {
 					// format = CallID , ack
 					String[] output = receivedString.split(DELIMITER);
@@ -226,6 +234,9 @@ public class RPCClient {
 
 			byte[] outBuf = new byte[maxPacketSize];
 			outBuf = dataToSend.getBytes();
+			
+			System.out.println("RPC ExchangeView sending message: " + dataToSend);
+			
 			DatagramPacket sendPkt = new DatagramPacket(outBuf, outBuf.length,
 					IP, portProj1bRPC);
 			rpcSocket.send(sendPkt);
@@ -241,6 +252,9 @@ public class RPCClient {
 				rpcSocket.receive(recvPkt);
 				
 				String received = new String(inBuf);
+				
+				System.out.println("RPC ExchangeView received message: "+ received);
+				
 				if (received != null) {
 					
 				

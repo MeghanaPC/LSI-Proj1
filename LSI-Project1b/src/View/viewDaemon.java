@@ -30,6 +30,8 @@ public class viewDaemon  implements Runnable{
 				Random random = new Random();
 				randomProbability = random.nextDouble();
 				
+				System.out.println("View daemon running");
+				
 				if (numProbability < randomProbability) {
 					//updating self
 					ServerView.serverView.put(EnterServlet.serverID.toString(),upState+DELIMITER_LEVEL2+System.currentTimeMillis());
@@ -43,8 +45,11 @@ public class viewDaemon  implements Runnable{
 					ConcurrentHashMap<String,String> mergedView=new ConcurrentHashMap<String,String>(ViewManager.mergeViews(ServerView.serverView,destView));
 					ViewManager.mergeViewWithSelf(mergedView);
 					
+					System.out.println("Gossip with another server");
+					
 				} else {
 //					//call simpleDB
+					System.out.println("Gossip with simple DB");
 					SimpleDbAccess.gossipWithSimpleDb();
 					
 				}

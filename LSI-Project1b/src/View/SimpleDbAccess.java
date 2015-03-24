@@ -47,6 +47,7 @@ public class SimpleDbAccess {
 			} catch (Exception e) {
 				return false;
 			}
+			System.out.println("New domain created");
 			return true;
 		}
 		return false;
@@ -69,7 +70,8 @@ public class SimpleDbAccess {
 			return;
 		}
 		if (dbViewString != null) {
-
+			
+			System.out.println("Merge branch - simple DB");
 			ConcurrentHashMap<String, String> dbView = ViewManager
 					.stringToHashMap(dbViewString);
 			// mergeViews() DB view with self view
@@ -86,6 +88,7 @@ public class SimpleDbAccess {
 		} else {
 			// Assuming that DB is empty as no server has yet merged its view
 			// with DB
+			System.out.println("Empty DB branch");
 			String serverViewString = ViewManager
 					.hashMapToString(ServerView.serverView);
 			putFirstTimeViewToDB(serverViewString);
@@ -107,6 +110,7 @@ public class SimpleDbAccess {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("FirstTime View to DB");
 
 	}
 
@@ -132,6 +136,7 @@ public class SimpleDbAccess {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("put view in DB");
 
 	}
 
@@ -142,6 +147,7 @@ public class SimpleDbAccess {
 				Boolean.TRUE);
 
 		result = sdb.select(sr);
+		System.out.println("Fetching view from DB");
 
 		for (Item item : result.getItems()) {
 			String s = item.getName();

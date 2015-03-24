@@ -11,14 +11,17 @@ public class ServerView {
 	public ServerView()
 	{
 		serverView=new ConcurrentHashMap<String,String>();
+		System.out.println("Inside - servewView constructor");
 	}
 	public ConcurrentHashMap<String,String> getServerView()
 	{
+		System.out.println("ServerView getter");
 		return serverView;
 	}
 	public void setServerView(ConcurrentHashMap<String,String> view)
 	{
 		serverView=view;
+		System.out.println("ServerView setter");
 	}
 	
 //	Tested and working
