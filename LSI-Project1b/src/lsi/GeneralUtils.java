@@ -42,6 +42,8 @@ public class GeneralUtils {
 	
 	public static String fetchAWSIP(){
 	
+		System.out.println("in fetch AWS IP");
+		
 		StringBuilder resultBuilder = new StringBuilder();
 		String commandString ="/opt/aws/bin/ec2-metadata --public-ipv4";
 		try {
@@ -59,6 +61,7 @@ public class GeneralUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("Result without parsing " + resultBuilder.toString());
 		String parseResult = resultBuilder.toString();
 		String[] resultArray = parseResult.split(" ");
 		parseResult = resultArray[1];

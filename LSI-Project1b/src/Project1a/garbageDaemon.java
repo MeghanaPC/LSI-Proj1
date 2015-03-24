@@ -8,6 +8,8 @@ public class garbageDaemon implements Runnable {
 	@Override
 	public void run(){
 		
+		System.out.println("In garbage daemon");
+		
 		ArrayList<String> expiredList = new ArrayList<String>();
 		while(true){
 			try {

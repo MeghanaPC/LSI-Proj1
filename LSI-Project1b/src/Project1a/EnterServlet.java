@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lsi.GeneralUtils;
 import lsi.ViewManager;
 
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -77,13 +78,15 @@ public class EnterServlet extends HttpServlet {
 
 		try {
 			// CHANGE TO CALL SCRIPT
-			serverID = InetAddress.getByName("127.0.0.1");
+			//serverID = InetAddress.getByName("127.0.0.1");
 
+			serverID = InetAddress.getByName(GeneralUtils.fetchAWSIP());
 			SimpleDbAccess.createSimpleDbDomainIfNotExists();
 
 			ServerView.serverView.put(serverID.toString(), upState
 					+ DELIMITER_LEVEL2 + System.currentTimeMillis());
 
+			System.out.println("Starting daemons");
 			Thread rpcServerThread = new Thread(new RPCServer());
 			rpcServerThread.setDaemon(true);
 			rpcServerThread.start();
@@ -95,6 +98,8 @@ public class EnterServlet extends HttpServlet {
 			Thread garbageDaemonThread = new Thread(new garbageDaemon());
 			garbageDaemonThread.setDaemon(true);
 			garbageDaemonThread.start();
+			System.out.println("Started all daemons");
+
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -109,6 +114,7 @@ public class EnterServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
+		System.out.println("in doGet()");
 		Cookie[] cookies = request.getCookies();
 		Boolean firstTimeAccess = true;
 		String cookieValue = null;
@@ -127,6 +133,7 @@ public class EnterServlet extends HttpServlet {
 
 		} else {
 
+			System.out.println("Cookie present in request " + cookieValue);
 			// validate cookie by calling session read
 			String[] cookieParts = cookieValue.split(COOKIE_DELIMITER_1);
 			SessionInfo sessionInfo = SessionTable.sessionMap
@@ -137,8 +144,12 @@ public class EnterServlet extends HttpServlet {
 					&& sessionInfo.getVersion() == cookieVersionNumber) {
 				// local server has the latest session details
 				// check if session is expired
+				
+				System.out.println("Local server has session details ");
+				
 				if (sessionInfo.getExpirationTime() < System
 						.currentTimeMillis()) {
+					System.out.println("Session expired");
 					createNewSession(request, response);
 				} else {
 
@@ -149,6 +160,8 @@ public class EnterServlet extends HttpServlet {
 			} else {
 				// Session read from primary and backups in cookie to find
 				// session details
+				
+				System.out.println("Trying to find session details on other servers");
 				String[] locationArray = cookieParts[2]
 						.split(COOKIE_DELIMITER_2);
 				
@@ -163,6 +176,7 @@ public class EnterServlet extends HttpServlet {
 				try {
 					returnObj = RPCClient.SessionReadClient(primaryList, cookieParts[0].trim(), cookieVersionNumber);
 					if(returnObj != null){
+						System.out.println("Read from Primary succeeded");
 						serverIdWithSessionInfo = returnObj.getServerID();
 					}
 				} catch (Exception e) {
@@ -182,6 +196,7 @@ public class EnterServlet extends HttpServlet {
 						returnObj = null;
 						returnObj = RPCClient.SessionReadClient(backupList, cookieParts[0].trim(), cookieVersionNumber);
 						if(returnObj != null){
+							System.out.println("Read from backup returned");
 							serverIdWithSessionInfo = returnObj.getServerID();
 						}
 					} catch (Exception e) {
@@ -221,6 +236,8 @@ public class EnterServlet extends HttpServlet {
 			HttpServletResponse response, String[] cookieParts,
 			SessionInfo sessionInfo,  String placeFound) throws ServletException, IOException {
 
+		System.out.println("Processing after session data found");
+		
 		SessionInfo sessionObj = new SessionInfo();
 		Date discardTime = new Date(System.currentTimeMillis()
 				+ SESSION_TIMEOUT_SECS * 1000 + DELTA_MILLISECS);
@@ -273,6 +290,8 @@ public class EnterServlet extends HttpServlet {
 
 		List<String> backups;
 
+		System.out.println("Calling session write");
+		
 		backups = RPCClient.SessionWriteClient(destIPsList, sessionID,
 				sessionObj);
 
@@ -299,6 +318,8 @@ public class EnterServlet extends HttpServlet {
 		cookieLocationMetdaData = cookieLocationMetdaData.substring(0,
 				cookieLocationMetdaData.length() - 1);
 
+		System.out.println("cookieLocationMetdaData " + cookieLocationMetdaData);
+		
 		Cookie cookie = new Cookie(COOKIE_NAME, sessionID + COOKIE_DELIMITER_1
 				+ sessionObj.getVersion() + COOKIE_DELIMITER_1
 				+ cookieLocationMetdaData);
@@ -333,6 +354,8 @@ public class EnterServlet extends HttpServlet {
 	private void createNewSession(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
+		System.out.println("In create new session");
+		
 		int sessionNumber = getSessionNumber();
 		String sessionID = sessionNumber + COOKIE_DELIMITER_2
 				+ this.serverID.toString();
@@ -372,6 +395,8 @@ public class EnterServlet extends HttpServlet {
 
 		List<String> backups;
 
+		System.out.println("Sending session write");
+		
 		backups = RPCClient.SessionWriteClient(destIPsList, sessionID,
 				sessionObj);
 
@@ -398,6 +423,7 @@ public class EnterServlet extends HttpServlet {
 		cookieLocationMetdaData = cookieLocationMetdaData.substring(0,
 				cookieLocationMetdaData.length() - 1);
 
+		System.out.println("cookieLocationMetdaData " + cookieLocationMetdaData);
 		Cookie cookie = new Cookie(COOKIE_NAME, sessionID + COOKIE_DELIMITER_1
 				+ STARTING_VERSION + COOKIE_DELIMITER_1
 				+ cookieLocationMetdaData);

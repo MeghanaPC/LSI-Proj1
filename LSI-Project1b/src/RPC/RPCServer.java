@@ -79,14 +79,18 @@ public class RPCServer implements Runnable {
 		result += receivedData[0].trim() + DELIMITER;
 		int operationCode = Integer.parseInt(receivedData[1].trim());
 		if (operationCode == OPCODE_READ) {
+			
+			System.out.println("OPCODE read");
 			// received format=callID,opcode,sessionID
 			SessionInfo sessionObj = SessionTable.sessionMap.get(receivedData[2].trim());
 			String sessionString = "";
 			if (sessionObj != null) {
+				System.out.println("Session Obj found ");
 				// sending format=callID,version,message,timestamp
 				sessionString = sessionObj.getVersion() + DELIMITER
 						+ sessionObj.getMessage()+ DELIMITER
 						+ sessionObj.getExpirationTime();
+				System.out.println(sessionString);
 			} else {
 				sessionString = -1 + DELIMITER + -1
 						+ DELIMITER + -1;
@@ -94,6 +98,7 @@ public class RPCServer implements Runnable {
 			result += sessionString;
 
 		} else if (operationCode == OPCODE_WRITE) {
+			System.out.println("opcode write");
 			// received format=callID,opcode,sessionID,message,version,timestamp
 			SessionInfo object = new SessionInfo();
 			object.setMessage(receivedData[3].trim());
@@ -103,8 +108,10 @@ public class RPCServer implements Runnable {
 			// sending format = callID, ack
 			SessionTable.sessionMap.put(receivedData[2].trim(), object);
 			result += ack;
+			System.out.println("updated session table for " + receivedData[2].trim());
 
 		} else if (operationCode == OPCODE_VIEW) {
+			System.out.println("OPCODE exchange views");
 			// received format = callID,opcode, stringOfTuples
 			ConcurrentHashMap<String, String> Myview = new ConcurrentHashMap<String, String>(View.ServerView.serverView);
 			ConcurrentHashMap<String, String> receivedview = new ConcurrentHashMap<String, String>();
@@ -117,6 +124,7 @@ public class RPCServer implements Runnable {
 			result += sendView;
 			lsi.ViewManager.mergeViewWithSelf(mergedView);
 
+			System.out.println("Merged view " + result);
 		}
 		return result;
 
