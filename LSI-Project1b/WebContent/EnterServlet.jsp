@@ -44,7 +44,7 @@ String viewString=(String)request.getAttribute("viewString");
 String DELIMITER_LEVEL1= "@";
 
 String[] viewTuples = viewString.split(DELIMITER_LEVEL1);
-String resultView = null;
+String resultView = "";
 for(String tuple:viewTuples){
 	resultView = resultView + tuple + "<br/>";
 }

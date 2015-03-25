@@ -9,6 +9,11 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
+    <listener>
+    <listener-class>
+  	Project1a.InitServletContext
+  </listener-class>
+  </listener>
    <servlet>
     <servlet-name>EnterServlet</servlet-name>
     <servlet-class>Project1a.EnterServlet</servlet-class>

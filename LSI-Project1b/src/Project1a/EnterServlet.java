@@ -45,8 +45,8 @@ public class EnterServlet extends HttpServlet {
 	private static final String defaultMessage = "Hello User!";
 
 	private static final String location = "localhost";
-	private static final String DELIMITER_LEVEL2 = "#";
-	private static final String upState = "UP";
+	public static final String DELIMITER_LEVEL2 = "#";
+	public static final String upState = "UP";
 	private static final String downState = "DOWN";
 	public static String serverID;
 	public static final int K_RESILIENCY_K_VALUE = 3;
@@ -75,11 +75,11 @@ public class EnterServlet extends HttpServlet {
 	public EnterServlet() {
 		super();
 		// TODO Auto-generated constructor stub
-
+/*
 		try {
 			// CHANGE TO CALL SCRIPT
 			//serverID = InetAddress.getByName("127.0.0.1");
-
+			
 			serverID = (GeneralUtils.fetchAWSIP());
 			SimpleDbAccess.createSimpleDbDomainIfNotExists();
 
@@ -102,12 +102,14 @@ public class EnterServlet extends HttpServlet {
 			garbageDaemonThread.setDaemon(true);
 			garbageDaemonThread.start();
 			System.out.println("Started all daemons");
-
+		
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		*/
 	}
 
 	/**
