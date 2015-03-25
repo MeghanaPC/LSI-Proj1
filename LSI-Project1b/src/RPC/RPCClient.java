@@ -52,13 +52,15 @@ public class RPCClient {
 		int callIDLocal=getCallID();
 		//UUID callID = UUID.randomUUID();
 		
-		String dataToSend = callIDLocal + DELIMITER + OPCODE_READ + DELIMITER+ SessionID;
+		String dataToSend = callIDLocal + DELIMITER + OPCODE_READ + DELIMITER+ SessionID+ DELIMITER;
 		byte[] outBuf = new byte[maxPacketSize];
 		outBuf = dataToSend.getBytes();
 		
 		System.out.println("PRC ReadClient message:" + dataToSend);
 		
 		for (String host : destIP) {
+			String[] arr = host.split("/");
+			host = arr[arr.length-1];
 			InetAddress IP = InetAddress.getByName(host);
 			DatagramPacket sendPkt = new DatagramPacket(outBuf, outBuf.length,
 					IP, portProj1bRPC);
@@ -151,7 +153,7 @@ public class RPCClient {
 					+ sessionID + DELIMITER
 					+ sessionObj.getMessage()+ DELIMITER
 					+ sessionObj.getVersion() + DELIMITER
-					+ sessionObj.getExpirationTime();
+					+ sessionObj.getExpirationTime() + DELIMITER;
 
 			byte[] outBuf = new byte[maxPacketSize];
 			outBuf = dataToSend.getBytes();
@@ -159,6 +161,8 @@ public class RPCClient {
 			System.out.println("PRC WriteClient sending message: " + dataToSend);
 
 			for (String host : destIP) {
+				String[] arr = host.split("/");
+				host = arr[arr.length-1];
 				InetAddress IP = InetAddress.getByName(host);
 				DatagramPacket sendPkt = new DatagramPacket(outBuf,
 						outBuf.length, IP, portProj1bRPC);
@@ -226,11 +230,13 @@ public class RPCClient {
 		try {
 			//UUID callID = UUID.randomUUID();
 			int callIDLocal=getCallID();
+			String[] arr = dest.split("/");
+			dest = arr[arr.length-1];
 			InetAddress IP = InetAddress.getByName(dest);
-			String viewString = null;
+			String viewString = "";
 			viewString=lsi.ViewManager.hashMapToString(view);
 			String dataToSend = callIDLocal + DELIMITER + OPCODE_VIEW + DELIMITER
-					+ viewString;
+					+ viewString + DELIMITER;
 
 			byte[] outBuf = new byte[maxPacketSize];
 			outBuf = dataToSend.getBytes();

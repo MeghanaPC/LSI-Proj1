@@ -16,7 +16,7 @@ public class viewDaemon  implements Runnable{
 	private static final String upState="UP";
 	private static final String downState="DOWN";
 	//	Need to fix this to a value
-	private final int GOSSIP_SECS = 10;
+	private final int GOSSIP_SECS = 60;
 	
 	@Override
 	public void run(){
@@ -26,15 +26,17 @@ public class viewDaemon  implements Runnable{
 		ConcurrentHashMap<String, String> activeServerViewMap= ViewManager.getActiveServersList(ServerView.serverView);
 		while(true){
 			try {
-				numProbability = (double) (1/activeServerViewMap.size()+1);  //plus 1 coz self has been excluded but we need this list
+				numProbability = (double) (1.0/activeServerViewMap.size()+1.0);  //plus 1 coz self has been excluded but we need this list
 				Random random = new Random();
 				randomProbability = random.nextDouble();
 				
 				System.out.println("View daemon running");
-				
+				String[] arr = EnterServlet.serverID.toString().split("/");
+				String serverId = arr[arr.length-1];
+				ServerView.serverView.put(serverId,upState+DELIMITER_LEVEL2+System.currentTimeMillis());
+
 				if (numProbability < randomProbability) {
 					//updating self
-					ServerView.serverView.put(EnterServlet.serverID.toString(),upState+DELIMITER_LEVEL2+System.currentTimeMillis());
 					
 					Set<String> serverSet=activeServerViewMap.keySet();
 					java.util.Collections.shuffle((List<?>) serverSet);

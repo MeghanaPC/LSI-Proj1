@@ -126,7 +126,7 @@ public class RPCServer implements Runnable {
 
 			System.out.println("Merged view " + result);
 		}
-		return result;
+		return result + DELIMITER;
 
 	}
 

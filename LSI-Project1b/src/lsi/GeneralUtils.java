@@ -56,7 +56,7 @@ public class GeneralUtils {
 			String outputString = "";			
 	    
 			while ((outputString = reader.readLine())!= null) {
-				resultBuilder.append(outputString + "\n");
+				resultBuilder.append(outputString);
 			}
 			
 		} catch (Exception e) {
@@ -66,7 +66,8 @@ public class GeneralUtils {
 		String parseResult = resultBuilder.toString();
 		String[] resultArray = parseResult.split(" ");
 		parseResult = resultArray[1];
-		return parseResult;
+		System.out.println("Returning AWS IP " + parseResult.trim());
+		return parseResult.trim();
 	}
 	
 	public static void main(String[] args) throws UnsupportedEncodingException {
