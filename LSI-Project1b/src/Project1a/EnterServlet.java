@@ -83,6 +83,7 @@ public class EnterServlet extends HttpServlet {
 			serverID = InetAddress.getByName(GeneralUtils.fetchAWSIP());
 			SimpleDbAccess.createSimpleDbDomainIfNotExists();
 
+			ServerView.serverView = new ConcurrentHashMap<String,String>();
 			ServerView.serverView.put(serverID.toString(), upState
 					+ DELIMITER_LEVEL2 + System.currentTimeMillis());
 
@@ -274,13 +275,13 @@ public class EnterServlet extends HttpServlet {
 		}
 
 		Collections.shuffle(serversList);
-		ArrayList<String> destIPsList = new ArrayList<>();
+		List<String> destIPsList = new ArrayList<>();
 
 		if (serversList.size() >= K_RESILIENCY_K_VALUE) {
-			destIPsList = (ArrayList<String>) serversList.subList(0,
+			destIPsList =  serversList.subList(0,
 					K_RESILIENCY_K_VALUE);
 		} else {
-			destIPsList = (ArrayList<String>) serversList.subList(0,
+			destIPsList =  serversList.subList(0,
 					serversList.size());
 		}
 
@@ -312,9 +313,11 @@ public class EnterServlet extends HttpServlet {
 			backupServerString = backupServerString + SERVER_ID_NULL + ",";
 		}
 
+		if(backupServerString.length() > 0){
 		backupServerString = backupServerString.substring(0,
 				backupServerString.length() - 1);
-
+		}
+		
 		cookieLocationMetdaData = cookieLocationMetdaData.substring(0,
 				cookieLocationMetdaData.length() - 1);
 
@@ -332,21 +335,21 @@ public class EnterServlet extends HttpServlet {
 		RequestDispatcher dispatcher = request
 				.getRequestDispatcher("EnterServlet.jsp");
 
-		request.setAttribute("serverID", serverID);
+		request.setAttribute("serverID", serverID.toString());
 		request.setAttribute("placeFound", placeFound);
-		request.setAttribute("primary", serverID);
+		request.setAttribute("primary", serverID.toString());
 		request.setAttribute("backup", backupServerString);
-		request.setAttribute("sessionExpiryTime", expirationTime);
-		request.setAttribute("discardTime", discardTime);
+		request.setAttribute("sessionExpiryTime", expirationTime.toString());
+		request.setAttribute("discardTime", discardTime.toString());
 
 		request.setAttribute("viewString",
 				ViewManager.hashMapToString(ServerView.serverView));
 
 		request.setAttribute("message", message);
-		/*
-		 * request.setAttribute("expiration",expirationTime.toString());
-		 * request.setAttribute("cookie", cookie.getValue());
-		 */
+		
+		 //request.setAttribute("expiration",expirationTime.toString());
+		 request.setAttribute("cookie", cookie.getValue());
+		
 		dispatcher.forward(request, response);
 
 	}
@@ -358,7 +361,7 @@ public class EnterServlet extends HttpServlet {
 		
 		int sessionNumber = getSessionNumber();
 		String sessionID = sessionNumber + COOKIE_DELIMITER_2
-				+ this.serverID.toString();
+				+ serverID.toString();
 
 		ConcurrentHashMap<String, String> serversUp = ViewManager
 				.getActiveServersList(ServerView.serverView);
@@ -374,13 +377,13 @@ public class EnterServlet extends HttpServlet {
 		}
 
 		Collections.shuffle(serversList);
-		ArrayList<String> destIPsList = new ArrayList<>();
+		List<String> destIPsList = new ArrayList<String>();
 
 		if (serversList.size() >= K_RESILIENCY_K_VALUE) {
-			destIPsList = (ArrayList<String>) serversList.subList(0,
+			destIPsList = serversList.subList(0,
 					K_RESILIENCY_K_VALUE);
 		} else {
-			destIPsList = (ArrayList<String>) serversList.subList(0,
+			destIPsList = serversList.subList(0,
 					serversList.size());
 		}
 
@@ -408,17 +411,19 @@ public class EnterServlet extends HttpServlet {
 		for (String backup : backups) {
 			cookieLocationMetdaData = cookieLocationMetdaData + backup
 					+ COOKIE_DELIMITER_2;
-			backupServerString = backupServerString + backup + ", ";
+			backupServerString = backupServerString + backup + "_";
 		}
 
 		for (int i = 0; i < serversNotReplied; i++) {
 			cookieLocationMetdaData = cookieLocationMetdaData + SERVER_ID_NULL
 					+ COOKIE_DELIMITER_2;
-			backupServerString = backupServerString + SERVER_ID_NULL + ",";
+			backupServerString = backupServerString + SERVER_ID_NULL + "_";
 		}
 
+		if(backupServerString.length() > 0){
 		backupServerString = backupServerString.substring(0,
 				backupServerString.length() - 1);
+		}
 
 		cookieLocationMetdaData = cookieLocationMetdaData.substring(0,
 				cookieLocationMetdaData.length() - 1);
@@ -438,21 +443,21 @@ public class EnterServlet extends HttpServlet {
 		RequestDispatcher dispatcher = request
 				.getRequestDispatcher("EnterServlet.jsp");
 
-		request.setAttribute("serverID", serverID);
+		request.setAttribute("serverID", serverID.toString());
 		request.setAttribute("placeFound", "New session created at " + serverID);
-		request.setAttribute("primary", serverID);
+		request.setAttribute("primary", serverID.toString());
 		request.setAttribute("backup", backupServerString);
-		request.setAttribute("sessionExpiryTime", expirationTime);
-		request.setAttribute("discardTime", discardTime);
+		request.setAttribute("sessionExpiryTime", expirationTime.toString());
+		request.setAttribute("discardTime", discardTime.toString());
 
 		request.setAttribute("viewString",
 				ViewManager.hashMapToString(ServerView.serverView));
 
 		request.setAttribute("message", message);
-		/*
-		 * request.setAttribute("expiration",expirationTime.toString());
-		 * request.setAttribute("cookie", cookie.getValue());
-		 */
+		
+		 //request.setAttribute("expiration",expirationTime.toString());
+		 request.setAttribute("cookie", cookie.getValue());
+
 		dispatcher.forward(request, response);
 
 	}

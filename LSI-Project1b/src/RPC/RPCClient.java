@@ -17,7 +17,7 @@ public class RPCClient {
 	private static final int maxPacketSize = 512;
 	private static final int portProj1bRPC = 5300;
 	private static int callID = 0;
-	private static final int timeOut = 10000;
+	private static final int timeOut = 30000;
 	private static String DELIMITER = "=";
 	private static int OPCODE_READ = 1;
 	private static int OPCODE_WRITE = 2;
@@ -59,6 +59,8 @@ public class RPCClient {
 		System.out.println("PRC ReadClient message:" + dataToSend);
 		
 		for (String host : destIP) {
+			String[] arr = host.split("/");
+			host = arr[arr.length-1];
 			InetAddress IP = InetAddress.getByName(host);
 			DatagramPacket sendPkt = new DatagramPacket(outBuf, outBuf.length,
 					IP, portProj1bRPC);
@@ -159,6 +161,8 @@ public class RPCClient {
 			System.out.println("PRC WriteClient sending message: " + dataToSend);
 
 			for (String host : destIP) {
+				String[] arr = host.split("/");
+				host = arr[arr.length-1];
 				InetAddress IP = InetAddress.getByName(host);
 				DatagramPacket sendPkt = new DatagramPacket(outBuf,
 						outBuf.length, IP, portProj1bRPC);
@@ -226,6 +230,8 @@ public class RPCClient {
 		try {
 			//UUID callID = UUID.randomUUID();
 			int callIDLocal=getCallID();
+			String[] arr = dest.split("/");
+			dest = arr[arr.length-1];
 			InetAddress IP = InetAddress.getByName(dest);
 			String viewString = null;
 			viewString=lsi.ViewManager.hashMapToString(view);
