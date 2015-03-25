@@ -98,7 +98,7 @@ public class ViewManager {
 				{
 					String newvalue=state+DELIMITER_LEVEL2+System.currentTimeMillis();
 					String[] strArr = svr.split("/");
-					String svrString = arr[arr.length-1];
+					String svrString = strArr[strArr.length-1];
 					View.ServerView.serverView.put(svrString,newvalue);
 				}
 			}
