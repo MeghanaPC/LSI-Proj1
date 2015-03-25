@@ -233,7 +233,7 @@ public class RPCClient {
 			String[] arr = dest.split("/");
 			dest = arr[arr.length-1];
 			InetAddress IP = InetAddress.getByName(dest);
-			String viewString = null;
+			String viewString = "";
 			viewString=lsi.ViewManager.hashMapToString(view);
 			String dataToSend = callIDLocal + DELIMITER + OPCODE_VIEW + DELIMITER
 					+ viewString + DELIMITER;
