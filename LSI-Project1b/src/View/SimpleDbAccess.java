@@ -25,6 +25,7 @@ public class SimpleDbAccess {
 			sdb = new AmazonSimpleDBClient(new BasicAWSCredentials(
 					"AKIAIXCNDMOAWSH7JEJA",
 					"EoZEMMGkTgRcYVwn3hUPdz7BRkSXhSUuaczQkOZU"));
+			sdb.setEndpoint("sdb.amazonaws.com");
 		}
 		
 		ArrayList<String> existingDomains = new ArrayList<String>();
@@ -58,11 +59,13 @@ public class SimpleDbAccess {
 
 		String dbViewString = null;
 
+		/*
 		if (sdb == null) {
 			sdb = new AmazonSimpleDBClient(new BasicAWSCredentials(
 					"AKIAIXCNDMOAWSH7JEJA",
 					"EoZEMMGkTgRcYVwn3hUPdz7BRkSXhSUuaczQkOZU"));
 		}
+		*/
 		try {
 			dbViewString = getViewFromDB();
 		} catch (Exception e) {

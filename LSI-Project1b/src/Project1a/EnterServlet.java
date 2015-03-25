@@ -48,15 +48,15 @@ public class EnterServlet extends HttpServlet {
 	private static final String DELIMITER_LEVEL2 = "#";
 	private static final String upState = "UP";
 	private static final String downState = "DOWN";
-	public static InetAddress serverID;
-	public static final int K_RESILIENCY_K_VALUE = 1;
+	public static String serverID;
+	public static final int K_RESILIENCY_K_VALUE = 3;
 
 	private static final String COOKIE_DELIMITER_1 = "-";
 	private static final String COOKIE_DELIMITER_2 = "_";
 
-	private static final long SESSION_TIMEOUT_SECS = 60;
+	private static final long SESSION_TIMEOUT_SECS = 120;
 
-	private static final long DELTA_MILLISECS = 4000;
+	private static final long DELTA_MILLISECS = 10000;
 
 	private static final int STARTING_VERSION = 1;
 
@@ -80,11 +80,13 @@ public class EnterServlet extends HttpServlet {
 			// CHANGE TO CALL SCRIPT
 			//serverID = InetAddress.getByName("127.0.0.1");
 
-			serverID = InetAddress.getByName(GeneralUtils.fetchAWSIP());
+			serverID = (GeneralUtils.fetchAWSIP());
 			SimpleDbAccess.createSimpleDbDomainIfNotExists();
 
 			ServerView.serverView = new ConcurrentHashMap<String,String>();
-			ServerView.serverView.put(serverID.toString(), upState
+			String[] arr = EnterServlet.serverID.toString().split("/");
+			String svrString = arr[arr.length-1];
+			ServerView.serverView.put(svrString, upState
 					+ DELIMITER_LEVEL2 + System.currentTimeMillis());
 
 			System.out.println("Starting daemons");

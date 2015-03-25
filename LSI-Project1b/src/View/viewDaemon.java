@@ -31,7 +31,9 @@ public class viewDaemon  implements Runnable{
 				randomProbability = random.nextDouble();
 				
 				System.out.println("View daemon running");
-				ServerView.serverView.put(EnterServlet.serverID.toString(),upState+DELIMITER_LEVEL2+System.currentTimeMillis());
+				String[] arr = EnterServlet.serverID.toString().split("/");
+				String serverId = arr[arr.length-1];
+				ServerView.serverView.put(serverId,upState+DELIMITER_LEVEL2+System.currentTimeMillis());
 
 				if (numProbability < randomProbability) {
 					//updating self
