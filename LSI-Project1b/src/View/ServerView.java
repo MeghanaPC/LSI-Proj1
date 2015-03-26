@@ -2,7 +2,9 @@ package View;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-
+/*
+ * Definition of a server view table object along with setters and getters
+ */
 public class ServerView {
 	
 	
@@ -23,26 +25,4 @@ public class ServerView {
 		serverView=view;
 		System.out.println("ServerView setter");
 	}
-	
-//	Tested and working
-	/*
-	public static void main(String[] args){
-		
-		HashMap<String,String> mapA = new HashMap<String, String>();
-		HashMap<String,String> mapB = new HashMap<String, String>();
-		
-		long currentTime = System.currentTimeMillis();
-		mapA.put("abds2334", "up_" + String.valueOf(currentTime));
-		currentTime += 300;
-		mapB.put("abcs2334", "up_" + String.valueOf(currentTime));
-		
-		ServerView sView = new ServerView();
-		sView.iterateHashMap(mapA);
-		sView.iterateHashMap(mapB);
-
-		sView.iterateHashMap(sView.mergeViews(mapA, mapB));
-		
-	}
-	*/
-
 }

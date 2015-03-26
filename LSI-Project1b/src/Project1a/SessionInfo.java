@@ -2,6 +2,9 @@ package Project1a;
 
 import java.util.Date;
 
+/*
+ * Entries in the session table are of type SessionInfo defined here
+ */
 public class SessionInfo {
 	private String message;
 	private int version;

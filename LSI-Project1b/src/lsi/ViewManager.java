@@ -15,6 +15,9 @@ public class ViewManager {
 	private static final String upState="UP";
 	private static final String downState="DOWN";
 
+	/*
+	 * Converts a delimited string into a hashmap
+	 */
 	public static ConcurrentHashMap<String, String> stringToHashMap(String toBeParsed){
 		
 		ConcurrentHashMap<String, String> resultMap = new ConcurrentHashMap<String, String>();
@@ -28,6 +31,9 @@ public class ViewManager {
 		return resultMap;
 	}
 	
+	/*
+	 * Converts a hashmap into a delimited string
+	 */
 	public static String hashMapToString(ConcurrentHashMap<String, String> map){
 		
 		StringBuilder resultBuilder = new StringBuilder();
@@ -42,13 +48,9 @@ public class ViewManager {
 		return resultBuilder.toString().substring(0, length-1);
 	}
 	
-	/*public static void iterateHashMap(ConcurrentHashMap<String, String> hMap){
-		
-		for(String key:hMap.keySet()){
-			System.out.println(key + " " + hMap.get(key));
-		}
-	}*/
-	
+	/*
+	 * Merges two views by adding unique entries from both maps and removing older overlapping entries
+	 */
 	public static ConcurrentHashMap<String, String> mergeViews(ConcurrentHashMap<String, String> mapA, ConcurrentHashMap<String, String> mapB) {
 		
 		ConcurrentHashMap<String, String> mapM = new ConcurrentHashMap<String, String>();
@@ -83,6 +85,10 @@ public class ViewManager {
 		}	
 		return mapM;
 	}
+	
+	/*
+	 * Updates view table entry to reflect new expiry time
+	 */
 	public static void UpdateView(List<String> serverID,String state)
 	{
 		//update self
@@ -90,7 +96,7 @@ public class ViewManager {
 		String serverIdString = arr[arr.length-1];
 		ServerView.serverView.put(serverIdString,upState+DELIMITER_LEVEL2+System.currentTimeMillis());
 		
-		if(state.equals(upState)||state.equals(downState))  //just checking currect state is passed
+		if(state.equals(upState)||state.equals(downState))  //just checking current state is passed
 		{
 			synchronized(View.ServerView.serverView)
 			{
@@ -105,6 +111,9 @@ public class ViewManager {
 		}
 	}
 	
+	/*
+	 * returns a list of all servers that are currently active (except for the calling server)
+	 */
 	public static ConcurrentHashMap<String, String>  getActiveServersList(ConcurrentHashMap<String, String> map){
 		//get all active servers except yourself
 		ConcurrentHashMap<String, String>  resultMap = new ConcurrentHashMap<String,String>(map);
@@ -121,7 +130,11 @@ public class ViewManager {
 
 		return resultMap;
 	}
-public static void mergeViewWithSelf(ConcurrentHashMap<String, String> newMerged) {
+	
+	/*
+	 * merge a view with the current view
+	 */
+	public static void mergeViewWithSelf(ConcurrentHashMap<String, String> newMerged) {
 		
 		synchronized(View.ServerView.serverView)
 		{
@@ -130,15 +143,5 @@ public static void mergeViewWithSelf(ConcurrentHashMap<String, String> newMerged
 		}
 		
 	}
-	
-//	For testing purposes
-	/*public static void main(String[] args) {
-		
-		ConcurrentHashMap<String, String> demoMap = stringToHashMap("server1_up_123456-server2_down_345678");
-//		iterateHashMap(demoMap);
-		
-		System.out.println(hashMapToString(demoMap));
-	}*/
-	
-	 
+		 
 }

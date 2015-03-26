@@ -1,5 +1,8 @@
 package RPC;
 
+/*
+ * Defines the object that encapsulates the parameters of an RPC message
+ */
 public class RPCReadReturnObj {
 
 	String serverID;

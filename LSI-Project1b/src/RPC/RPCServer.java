@@ -29,6 +29,9 @@ public class RPCServer implements Runnable {
 		rpcSocket = new DatagramSocket(portProj1bRPC);
 	}
 
+	/*
+	 * The Server side of each RPC communication - constantly listening for messages + parsing them 
+	 */
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -72,6 +75,9 @@ public class RPCServer implements Runnable {
 
 	}
 
+	/*
+	 * Generates a response based on the opcode : WRITE, READ or VIEW
+	 */
 	public String generateReply(String data) throws Exception {
 
 		String result = "";

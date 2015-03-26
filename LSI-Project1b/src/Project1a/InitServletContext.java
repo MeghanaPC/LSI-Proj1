@@ -22,6 +22,9 @@ public class InitServletContext implements ServletContextListener{
 		
 	}
 
+	/*
+	 * Performs initial application setup - starts daemons and adds server entry to its view table
+	 */
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		// TODO Auto-generated method stub

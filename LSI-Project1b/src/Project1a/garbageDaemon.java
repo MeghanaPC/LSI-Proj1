@@ -5,6 +5,9 @@ import java.util.Set;
 
 public class garbageDaemon implements Runnable {
 	
+	/*
+	 * Runs periodically and clears expired entries from the session tables
+	 */
 	@Override
 	public void run(){
 		

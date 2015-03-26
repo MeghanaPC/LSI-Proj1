@@ -237,6 +237,9 @@ public class EnterServlet extends HttpServlet {
 
 	}
 
+	/*
+	 * Processes a request for an existing session - updates expiration and discard times
+	 */
 	private void processAfterSessionDataFound(HttpServletRequest request,
 			HttpServletResponse response, String[] cookieParts,
 			SessionInfo sessionInfo,  String placeFound) throws ServletException, IOException {
@@ -369,6 +372,9 @@ public class EnterServlet extends HttpServlet {
 
 	}
 
+	/*
+	 * Handles request with no session data - creates a new session
+	 */
 	private void createNewSession(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 

@@ -17,9 +17,11 @@ public class viewDaemon  implements Runnable{
 	private static final String DELIMITER_LEVEL2 = "#";
 	private static final String upState="UP";
 	private static final String downState="DOWN";
-	//	Need to fix this to a value
 	private final int GOSSIP_SECS = 60;
 	
+	/*
+	 * This daemon randomly chooses between gossiping with the simpleDB or with another server
+	 */
 	@Override
 	public void run(){
 		ConcurrentHashMap<String,String> destView;
@@ -43,7 +45,6 @@ public class viewDaemon  implements Runnable{
 				if (numProbability < randomProbability) {
 					//updating self
 					System.out.println("Should send exchange views now");
-					//Set<String> serverSet=activeServerViewMap.keySet();
 					ArrayList<String> serversList = new ArrayList<String>();
 					for(String key : ServerView.serverView.keySet()){
 						serversList.add(key);

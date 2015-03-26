@@ -42,6 +42,9 @@ public class RPCClient {
 	}
 	
 	//sessionObj should contain stuff from Cookie
+	/*
+	 * Performs an RPC read operation for the servers contained in the destination IP list
+	 */
 	public static RPCReadReturnObj SessionReadClient(List<String> destIP,
 			String SessionID,int versionNumber) throws Exception{
 		// format to send = callID, opcode,sessionID
@@ -50,7 +53,6 @@ public class RPCClient {
 		DatagramSocket rpcSocket = new DatagramSocket();
 		rpcSocket.setSoTimeout(timeOut);
 		int callIDLocal=getCallID();
-		//UUID callID = UUID.randomUUID();
 		
 		String dataToSend = callIDLocal + DELIMITER + OPCODE_READ + DELIMITER+ SessionID+ DELIMITER;
 		byte[] outBuf = new byte[maxPacketSize];
@@ -123,6 +125,9 @@ public class RPCClient {
 		return null;
 	}
 
+	/*
+	 * Verifies the callID version
+	 */
 	private static boolean checkCallIDVersion(int recVersion, int currVersion,
 			int recCallID, int currCallID) {
 		if (recVersion != currVersion)
@@ -135,19 +140,15 @@ public class RPCClient {
 
 	public static List<String> SessionWriteClient(List<String> destIP,String sessionID,SessionInfo sessionObj) {
 		List<String> backups = new ArrayList<String>();
-
-		
 		DatagramSocket rpcSocket;
 		try {
 			rpcSocket = new DatagramSocket();
 		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			return backups;
 		}
 		try {	
 			rpcSocket.setSoTimeout(timeOut);
-			//UUID callID = UUID.randomUUID();
 			int callIDLocal=getCallID();
 			String dataToSend = callIDLocal + DELIMITER + OPCODE_WRITE + DELIMITER
 					+ sessionID + DELIMITER
@@ -241,12 +242,14 @@ public class RPCClient {
 
 	}
 
+	/*
+	 * Exchanges views with a client identified by dest
+	 */
 	public static ConcurrentHashMap<String, String> ExchangeViewClient(String dest,
 			ConcurrentHashMap<String, String> view) throws Exception {
 		DatagramSocket rpcSocket = new DatagramSocket();
 		rpcSocket.setSoTimeout(timeOut);
 		try {
-			//UUID callID = UUID.randomUUID();
 			int callIDLocal=getCallID();
 			String[] arr = dest.split("/");
 			dest = arr[arr.length-1];
@@ -280,15 +283,12 @@ public class RPCClient {
 				System.out.println("RPC ExchangeView received message: "+ received);
 				
 				if (received != null) {
-					
-				
 					//updating responded to upstate
 					InetAddress returnAddr = recvPkt.getAddress();
 					String[] temp = returnAddr.toString().trim().split("/"); 
 					List<String> serverIDlist=new ArrayList<String>();
 					serverIDlist.add(temp[1].trim());
 					lsi.ViewManager.UpdateView(serverIDlist,upState);
-					
 					
 					receivedString = received.split(DELIMITER);
 					if (Integer.parseInt(receivedString[0].trim())==callIDLocal) {

@@ -11,6 +11,9 @@ import java.util.Enumeration;
 
 public class GeneralUtils {
 
+	/*
+	 * Returns the IP address for a server(non AWS version)
+	 */
 	public static String fetchIP(){
 		
 		String resultIP = null;
@@ -41,6 +44,9 @@ public class GeneralUtils {
 		return resultIP;
 	}
 	
+	/*
+	 * Returns the IP address of a server (works with AWS)
+	 */
 	public static String fetchAWSIP(){
 	
 		System.out.println("in fetch AWS IP");
@@ -68,11 +74,6 @@ public class GeneralUtils {
 		parseResult = resultArray[1];
 		System.out.println("Returning AWS IP " + parseResult.trim());
 		return parseResult.trim();
-	}
-	
-	public static void main(String[] args) throws UnsupportedEncodingException {
-		//System.out.println(fetchAWSIP());
-	
 	}
 	
 }
