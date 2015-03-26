@@ -193,6 +193,7 @@ public class RPCClient {
 					}
 				}
 			} while (k_ack != destIP.size());
+			
 			//set servers to up / down
 			List<String> downservers=new ArrayList<String>();
 			for(String svr:destIP)
@@ -205,9 +206,25 @@ public class RPCClient {
 			lsi.ViewManager.UpdateView(backups, upState);
 			lsi.ViewManager.UpdateView(downservers, downState);
 			
+			
 		} catch (SocketTimeoutException stoe) {
 			// timeout
 			stoe.printStackTrace();
+			try {
+				// set servers to up / down
+				System.out.println("In finally, setting to down BAckups size: "
+						+ backups.size());
+				List<String> downservers = new ArrayList<String>();
+				for (String svr : destIP) {
+					if (!backups.contains(svr)) {
+						downservers.add(svr);
+					}
+				}
+				lsi.ViewManager.UpdateView(backups, upState);
+				lsi.ViewManager.UpdateView(downservers, downState);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			return backups;
 		} catch (IOException ioe) {
 			// other error
@@ -217,6 +234,7 @@ public class RPCClient {
 			e.printStackTrace();
 			return backups;
 		}finally {
+			
 			rpcSocket.close();
 		}
 		return backups;
@@ -287,6 +305,9 @@ public class RPCClient {
 			return null;
 		} catch (SocketTimeoutException stoe) {
 			// timeout
+			List<String> destIps = new ArrayList<>();
+			destIps.add(dest);
+			lsi.ViewManager.UpdateView(destIps, downState);
 			stoe.printStackTrace();
 			return null;
 		} catch (IOException ioe) {

@@ -167,4 +167,16 @@ public class SimpleDbAccess {
 		return null;
 	}
 
+	public static void removeIPFromDB(String serverID) {
+
+		try {
+			String dbView = getViewFromDB();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//ConcurrentHashMApViewManager.stringToHashMap(dbView);
+		
+	}
+
 }
