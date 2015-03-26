@@ -27,7 +27,7 @@ out.println("<h1> "+ message + " </h1>"); %>
 String cookie = (String) request.getAttribute("cookie");
 //String expirationTime = (String) request.getAttribute("expiration");
 
-out.println(cookie); 
+out.println("Cookie Value: " + cookie); 
 out.println("<br/>");
 //out.println(expirationTime);
 
@@ -50,7 +50,7 @@ for(String tuple:viewTuples){
 }
 
 //need to complete --- complete what? :O
-String outputString = "Server ID: " + serverID + " Place Found: " + placeFound + "<br/>" 
+String outputString = "<br/> Server ID: " + serverID + " Place Found: " + placeFound + "<br/>" 
 						+"Primary: " + primary + " Backup: " + backup + "<br/>" + "Expiry Time: " + sessionExpiryTime + " Discard Time: " + discardTime + "<br/>" + "Server View: "+ resultView;
 
 out.println(outputString);

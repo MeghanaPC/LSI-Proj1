@@ -288,6 +288,17 @@ public class EnterServlet extends HttpServlet {
 			destIPsList =  serversList.subList(0,
 					serversList.size());
 		}
+		
+		if(serversList.size() < K_RESILIENCY_K_VALUE){
+			for(String key : ServerView.serverView.keySet()){
+				if(!serversList.contains(key)){
+					serversList.add(key);
+					if(serversList.size() >= K_RESILIENCY_K_VALUE){
+						break;
+					}
+				}
+			}
+		}
 
 		// Updating local table
 		String sessionID = cookieParts[0].trim();
@@ -308,13 +319,13 @@ public class EnterServlet extends HttpServlet {
 		for (String backup : backups) {
 			cookieLocationMetdaData = cookieLocationMetdaData + backup
 					+ COOKIE_DELIMITER_2;
-			backupServerString = backupServerString + backup + ", ";
+			backupServerString = backupServerString + backup + COOKIE_DELIMITER_2;
 		}
 
 		for (int i = 0; i < serversNotReplied; i++) {
 			cookieLocationMetdaData = cookieLocationMetdaData + SERVER_ID_NULL
 					+ COOKIE_DELIMITER_2;
-			backupServerString = backupServerString + SERVER_ID_NULL + ",";
+			backupServerString = backupServerString + SERVER_ID_NULL + COOKIE_DELIMITER_2;
 		}
 
 		if(backupServerString.length() > 0){
@@ -376,6 +387,17 @@ public class EnterServlet extends HttpServlet {
 			for (String serverIDInMap : serversUp.keySet()) {
 				if (!serverIDInMap.equals(serverID.toString())) {
 					serversList.add(serverIDInMap);
+				}
+			}
+		}
+		
+		if(serversList.size() < K_RESILIENCY_K_VALUE){
+			for(String key : ServerView.serverView.keySet()){
+				if(!serversList.contains(key)){
+					serversList.add(key);
+					if(serversList.size() >= K_RESILIENCY_K_VALUE){
+						break;
+					}
 				}
 			}
 		}
