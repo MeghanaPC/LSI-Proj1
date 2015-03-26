@@ -49,7 +49,7 @@ public class EnterServlet extends HttpServlet {
 	public static final String upState = "UP";
 	private static final String downState = "DOWN";
 	public static String serverID;
-	public static final int K_RESILIENCY_K_VALUE = 3;
+	public static final int K_RESILIENCY_K_VALUE = 1;
 
 	private static final String COOKIE_DELIMITER_1 = "-";
 	private static final String COOKIE_DELIMITER_2 = "_";
