@@ -17,17 +17,19 @@ public class SimpleDbAccess {
 	public static final String DOMAIN_NAME = "LSIProj1b";
 	public static final String ITEM_NAME = "ViewItem";
 	public static final String ATTR_NAME = "ATTR";
+	private static final String AWS_ACCESS_KEY_ID = "AWS_ACCESS_KEY_ID";
+	private static final String AWS_SECRET_KEY = "AWS_SECRET_KEY";
 
 	// returns true if the domain was created
 	public static boolean createSimpleDbDomainIfNotExists() {
 
 		if (sdb == null) {
 			sdb = new AmazonSimpleDBClient(new BasicAWSCredentials(
-					"AKIAIXCNDMOAWSH7JEJA",
-					"EoZEMMGkTgRcYVwn3hUPdz7BRkSXhSUuaczQkOZU"));
+					System.getProperty(AWS_ACCESS_KEY_ID),
+					System.getProperty(AWS_SECRET_KEY)));
 			sdb.setEndpoint("sdb.amazonaws.com");
 		}
-		
+
 		ArrayList<String> existingDomains = new ArrayList<String>();
 		String nextToken = null;
 		do {
@@ -59,13 +61,6 @@ public class SimpleDbAccess {
 
 		String dbViewString = null;
 
-		/*
-		if (sdb == null) {
-			sdb = new AmazonSimpleDBClient(new BasicAWSCredentials(
-					"AKIAIXCNDMOAWSH7JEJA",
-					"EoZEMMGkTgRcYVwn3hUPdz7BRkSXhSUuaczQkOZU"));
-		}
-		*/
 		try {
 			dbViewString = getViewFromDB();
 		} catch (Exception e) {
@@ -73,7 +68,7 @@ public class SimpleDbAccess {
 			return;
 		}
 		if (dbViewString != null) {
-			
+
 			System.out.println("Merge branch - simple DB");
 			System.out.println("View String in DB " + dbViewString);
 			ConcurrentHashMap<String, String> dbView = ViewManager
@@ -105,8 +100,8 @@ public class SimpleDbAccess {
 		PutAttributesRequest putAttributesRequest = new PutAttributesRequest();
 		putAttributesRequest.setDomainName(DOMAIN_NAME);
 		List<ReplaceableAttribute> data = new ArrayList<ReplaceableAttribute>();
-		data.add((new ReplaceableAttribute().withName(ATTR_NAME)
-				.withValue(serverViewString).withReplace(true)));
+		data.add((new ReplaceableAttribute().withName(ATTR_NAME).withValue(
+				serverViewString).withReplace(true)));
 		putAttributesRequest.setItemName(ITEM_NAME);
 		putAttributesRequest.setAttributes(data);
 		try {
@@ -123,8 +118,8 @@ public class SimpleDbAccess {
 		PutAttributesRequest putAttributesRequest = new PutAttributesRequest();
 		putAttributesRequest.setDomainName(DOMAIN_NAME);
 		List<ReplaceableAttribute> data = new ArrayList<ReplaceableAttribute>();
-		data.add((new ReplaceableAttribute().withName(ATTR_NAME)
-				.withValue(updatedDbView).withReplace(true)));
+		data.add((new ReplaceableAttribute().withName(ATTR_NAME).withValue(
+				updatedDbView).withReplace(true)));
 		putAttributesRequest.setItemName(ITEM_NAME);
 		putAttributesRequest.setAttributes(data);
 		UpdateCondition condition = new UpdateCondition(ATTR_NAME, oldDbView,
@@ -134,9 +129,6 @@ public class SimpleDbAccess {
 			sdb.putAttributes(putAttributesRequest);
 		} catch (AmazonServiceException e) {
 			e.printStackTrace();
-			if (e.getErrorCode().equals("409")) {
-				// retry
-			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -167,16 +159,5 @@ public class SimpleDbAccess {
 		return null;
 	}
 
-	public static void removeIPFromDB(String serverID) {
-
-		try {
-			String dbView = getViewFromDB();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//ConcurrentHashMApViewManager.stringToHashMap(dbView);
-		
-	}
 
 }
