@@ -1,1 +1,1 @@
-# LSI-Proj1
+# LSI-Project1
